@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>1945 Air Force v2 - Hangar, Wingmen & Homing Missiles</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, viewport-fit=cover">
+<title>1945 Air Force v3 - Battleships, Boss Phases & Overdrive Laser</title>
 <style>
   :root {
     --gold: #fbbf24;
@@ -11,6 +11,26 @@
     --cyan: #38bdf8;
     --green: #22c55e;
     --purple: #c084fc;
+    --beam: #22d3ee;
+    --page-bg: #cbd5e1;
+    color-scheme: light;
+    box-sizing: border-box;
+    height: 100%;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page-bg: #090d16;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page-bg: #090d16;
+    color-scheme: dark;
+  }
+  html {
+    scroll-padding-top: env(safe-area-inset-top, 0px);
   }
   * {
     box-sizing: border-box;
@@ -20,13 +40,13 @@
     -webkit-user-select: none;
   }
   body {
-    background: #090d16;
+    background: var(--page-bg);
     color: #f8fafc;
     font-family: 'Courier New', Courier, monospace;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    height: 100%;
     overflow: hidden;
   }
   #game-wrapper {
@@ -34,7 +54,7 @@
     width: 480px;
     height: 720px;
     max-width: 100vw;
-    max-height: 100vh;
+    max-height: 100%;
     box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 14px rgba(56, 189, 248, 0.3);
     border: 2px solid #1e293b;
     border-radius: 6px;
@@ -112,7 +132,7 @@
   .badge-purple { border-color: #c084fc; color: #e9d5ff; }
   #boss-hud {
     position: absolute;
-    top: 76px;
+    top: 104px;
     left: 50%;
     transform: translateX(-50%);
     width: 84%;
@@ -131,6 +151,7 @@
     text-shadow: 1px 1px 0 #000;
   }
   .boss-bar-bg {
+    position: relative;
     width: 100%;
     height: 10px;
     background: rgba(0, 0, 0, 0.8);
@@ -305,6 +326,113 @@
     align-items: center;
     justify-content: center;
   }
+  /* ---- v3: Overdrive laser, boss phases ---- */
+  .od-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 148px;
+  }
+  .od-bar-container {
+    flex: 1;
+    height: 8px;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid #64748b;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .od-bar-fill {
+    height: 100%;
+    width: 0%;
+    background: var(--beam);
+    opacity: 0.7;
+  }
+  .od-bar-fill.ready {
+    opacity: 1;
+    box-shadow: 0 0 8px var(--beam);
+    animation: odPulse 0.6s ease-in-out infinite alternate;
+  }
+  .od-bar-fill.firing {
+    opacity: 1;
+    background: linear-gradient(90deg, #ffffff, var(--beam));
+  }
+  .od-label {
+    font-size: 10px;
+    font-weight: bold;
+    color: var(--beam);
+    min-width: 58px;
+    text-align: right;
+  }
+  @keyframes odPulse {
+    from { filter: brightness(1); }
+    to { filter: brightness(1.6); }
+  }
+  .laser-touch-btn {
+    position: absolute;
+    bottom: 16px;
+    left: 84px;
+    width: 58px;
+    height: 58px;
+    padding: 0;
+    border-radius: 50%;
+    border: 2px solid #a5f3fc;
+    background: conic-gradient(var(--beam) calc(var(--charge, 0) * 1%), rgba(15, 23, 42, 0.92) 0);
+    color: #f8fafc;
+    font-family: inherit;
+    font-weight: 900;
+    font-size: 11px;
+    cursor: pointer;
+    z-index: 6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .laser-touch-btn span {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(8, 47, 73, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.1;
+    pointer-events: none;
+  }
+  .laser-touch-btn.ready {
+    box-shadow: 0 0 16px var(--beam);
+    animation: odPulse 0.6s ease-in-out infinite alternate;
+  }
+  .boss-phase {
+    font-size: 10px;
+    font-weight: bold;
+    color: #fdba74;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 0 #000;
+  }
+  .phase-mark {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: rgba(248, 250, 252, 0.8);
+  }
+  #boss-bar-fill.p2 {
+    background: linear-gradient(90deg, #6b21a8, #c084fc, #f97316);
+  }
+  #boss-bar-fill.p3 {
+    background: linear-gradient(90deg, #7f1d1d, #dc2626, #fde047);
+  }
+  .boss-bar-bg.shielded {
+    border-color: #e2e8f0;
+    box-shadow: 0 0 10px rgba(226, 232, 240, 0.6);
+  }
+  .btn:focus-visible, .action-btn:focus-visible, .bomb-touch-btn:focus-visible, .laser-touch-btn:focus-visible {
+    outline: 2px solid #fde68a;
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .od-bar-fill.ready, .laser-touch-btn.ready { animation: none; }
+  }
 </style>
 </head>
 <body>
@@ -317,6 +445,10 @@
       <div class="score-label" id="plane-hud-label">P-38 LIGHTNING</div>
       <div class="hp-bar-container">
         <div id="hp-fill" class="hp-bar-fill"></div>
+      </div>
+      <div class="od-row">
+        <div class="od-bar-container"><div id="od-fill" class="od-bar-fill"></div></div>
+        <span class="od-label" id="od-label">OD 0%</span>
       </div>
       <div class="stats-row">
         <span class="badge" id="weapon-badge">WPN LV.1</span>
@@ -339,11 +471,17 @@
     <div class="boss-title" id="boss-name">⚠️ SUPER BOMBER "IRON VALKYRIE" ⚠️</div>
     <div class="boss-bar-bg">
       <div id="boss-bar-fill"></div>
+      <div class="phase-mark" style="left:33.33%;"></div>
+      <div class="phase-mark" style="left:66.66%;"></div>
     </div>
+    <div class="boss-phase" id="boss-phase">PHASE I: HEAVY BOMBER</div>
   </div>
 
   <button id="bombBtn" class="bomb-touch-btn" title="Trigger Air Strike (B or Space)">
     AIR<br>STRIKE
+  </button>
+  <button id="laserBtn" class="laser-touch-btn" title="Fire Overdrive Laser (L or E)">
+    <span>LASER</span>
   </button>
 
   <div class="top-btns">
@@ -353,8 +491,8 @@
 
   <!-- Start / Hangar Screen -->
   <div id="start-overlay" class="overlay">
-    <div class="title-banner">1945: V2</div>
-    <div class="subtitle-banner">STRIKE SQUADRON EDITION</div>
+    <div class="title-banner">1945: V3</div>
+    <div class="subtitle-banner">IRONCLAD OVERDRIVE EDITION</div>
 
     <div class="hangar-label">SELECT YOUR FIGHTER AIRCRAFT</div>
     <div class="aircraft-grid">
@@ -385,6 +523,8 @@
       <div><strong>MOVE:</strong> WASD / Arrows / Mouse / Touch Drag</div>
       <div><strong>WEAPONS:</strong> Auto-Fire Guns + Auto Lock-On Homing Missiles</div>
       <div><strong>AIR STRIKE BOMB:</strong> Spacebar / X / B / Red Button</div>
+      <div><strong>OVERDRIVE LASER:</strong> L / E / Cyan Button when the meter is full</div>
+      <div><strong>BATTLESHIPS:</strong> Knock out the AA turrets, then sink the hull</div>
       <hr style="border-color:#334155;margin:6px 0;">
       <div><strong>[P]</strong> Main Gun Upgrade &nbsp; <strong>[M]</strong> Homing Missile Upgrade</div>
       <div><strong>[W]</strong> AI Wingman Drone (Up to 2 + Overcharge)</div>
@@ -431,6 +571,12 @@
   const finalScoreEl = document.getElementById('final-score');
   const finalHiEl = document.getElementById('final-hi');
   const finalWaveEl = document.getElementById('final-wave');
+  const odFill = document.getElementById('od-fill');
+  const odLabel = document.getElementById('od-label');
+  const laserBtn = document.getElementById('laserBtn');
+  const gameWrapper = document.getElementById('game-wrapper');
+  const bossBarBg = document.querySelector('.boss-bar-bg');
+  const bossPhaseEl = document.getElementById('boss-phase');
 
   // Aircraft Specifications
   const AIRCRAFT_SPECS = {
@@ -443,7 +589,8 @@
       missileInterval: 48,
       missileDmg: 26,
       primaryColor: '#e2e8f0',
-      accentColor: '#38bdf8'
+      accentColor: '#38bdf8',
+      beamColor: '#22d3ee'
     },
     p51: {
       id: 'p51',
@@ -454,7 +601,8 @@
       missileInterval: 34,
       missileDmg: 19,
       primaryColor: '#f1f5f9',
-      accentColor: '#ef4444'
+      accentColor: '#ef4444',
+      beamColor: '#fb7185'
     },
     p61: {
       id: 'p61',
@@ -465,7 +613,8 @@
       missileInterval: 56,
       missileDmg: 38,
       primaryColor: '#334155',
-      accentColor: '#f59e0b'
+      accentColor: '#f59e0b',
+      beamColor: '#fbbf24'
     }
   };
 
@@ -550,14 +699,117 @@
       gain.gain.linearRampToValueAtTime(0.001, now + 0.65);
       osc.start(now);
       osc.stop(now + 0.65);
+    } else if (type === 'laserStart') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(180, now);
+      osc.frequency.exponentialRampToValueAtTime(1500, now + 0.28);
+      gain.gain.setValueAtTime(0.09, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.3);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    } else if (type === 'odReady') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(660, now);
+      osc.frequency.setValueAtTime(990, now + 0.08);
+      osc.frequency.setValueAtTime(1320, now + 0.16);
+      gain.gain.setValueAtTime(0.08, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.3);
+      osc.start(now);
+      osc.stop(now + 0.3);
+    } else if (type === 'transform') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(55, now);
+      osc.frequency.exponentialRampToValueAtTime(640, now + 0.9);
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.95);
+      osc.start(now);
+      osc.stop(now + 0.95);
+    } else if (type === 'flak') {
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.exponentialRampToValueAtTime(55, now + 0.08);
+      gain.gain.setValueAtTime(0.045, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.08);
+      osc.start(now);
+      osc.stop(now + 0.08);
+    } else if (type === 'sink') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(75, now);
+      osc.frequency.exponentialRampToValueAtTime(18, now + 1.3);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 1.3);
+      osc.start(now);
+      osc.stop(now + 1.3);
+    } else if (type === 'bossWarn') {
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(880, now);
+      osc.frequency.setValueAtTime(620, now + 0.12);
+      osc.frequency.setValueAtTime(880, now + 0.24);
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.36);
+      osc.start(now);
+      osc.stop(now + 0.36);
+    } else if (type === 'bossBeam') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(70, now + 0.7);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.7);
+      osc.start(now);
+      osc.stop(now + 0.7);
     }
+  }
+
+  // Continuous hum while the Overdrive Laser is firing
+  let laserHum = null;
+  function startLaserHum() {
+    if (muted || !audioCtx || laserHum) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const osc2 = audioCtx.createOscillator();
+    const lfo = audioCtx.createOscillator();
+    const lfoGain = audioCtx.createGain();
+    const gain = audioCtx.createGain();
+    osc.type = 'sawtooth';
+    osc.frequency.value = 110;
+    osc2.type = 'square';
+    osc2.frequency.value = 221;
+    lfo.frequency.value = 17;
+    lfoGain.gain.value = 16;
+    lfo.connect(lfoGain);
+    lfoGain.connect(osc.frequency);
+    osc.connect(gain);
+    osc2.connect(gain);
+    gain.connect(audioCtx.destination);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.035, now + 0.08);
+    osc.start(now);
+    osc2.start(now);
+    lfo.start(now);
+    laserHum = { osc, osc2, lfo, gain };
+  }
+
+  function stopLaserHum() {
+    if (!laserHum || !audioCtx) { laserHum = null; return; }
+    const now = audioCtx.currentTime;
+    const h = laserHum;
+    laserHum = null;
+    h.gain.gain.cancelScheduledValues(now);
+    h.gain.gain.setValueAtTime(Math.max(0.0001, h.gain.gain.value), now);
+    h.gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.12);
+    [h.osc, h.osc2, h.lfo].forEach((o) => { try { o.stop(now + 0.14); } catch (err) { /* already stopped */ } });
   }
 
   // Game State
   let running = false;
   let paused = false;
   let score = 0;
-  let highScore = Number(localStorage.getItem('1945_hi_score_v2') || 0);
+  let highScore = 0;
+  try {
+    highScore = Number(localStorage.getItem('1945_hi_score_v2') || 0);
+  } catch (err) {
+    highScore = 0;
+  }
   hiBadge.textContent = `HI: ${highScore}`;
 
   let wave = 1;
@@ -578,6 +830,12 @@
   let clouds = [];
   let islands = [];
   let boss = null;
+  let ships = [];
+  let nextShipFrame = 300;
+  const LASER_DURATION = 210;
+  let lastOdHud = -1;
+  let lastOdMsgFrame = -999;
+  let lastFlakSound = 0;
 
   // Input State
   const keys = {};
@@ -593,6 +851,10 @@
     }
     if (e.code === 'KeyP' && running) {
       togglePause();
+    }
+    if ((e.code === 'KeyL' || e.code === 'KeyE') && running && !paused && !e.repeat) {
+      e.preventDefault();
+      activateOverdrive();
     }
   });
 
@@ -634,19 +896,29 @@
     pointerActive = false;
   });
 
-  document.getElementById('bombBtn').addEventListener('click', () => {
+  document.getElementById('bombBtn').addEventListener('click', (e) => {
+    e.currentTarget.blur();
     if (running && !paused) triggerBomb();
+  });
+
+  laserBtn.addEventListener('click', (e) => {
+    e.currentTarget.blur();
+    if (running && !paused) activateOverdrive();
   });
 
   document.getElementById('muteBtn').addEventListener('click', (e) => {
     muted = !muted;
     e.target.textContent = muted ? '🔇 MUTE' : '🔊 SFX';
+    if (muted) stopLaserHum();
+    else if (running && !paused && player && player.laser > 0) startLaserHum();
   });
 
   function togglePause() {
     if (!running) return;
     paused = !paused;
     document.getElementById('pauseBtn').textContent = paused ? '▶ RESUME' : '⏸ PAUSE';
+    if (paused) stopLaserHum();
+    else if (player && player.laser > 0) startLaserHum();
   }
   document.getElementById('pauseBtn').addEventListener('click', togglePause);
 
@@ -693,6 +965,13 @@
     airstrikeFlash = 0;
     boss = null;
     bossHud.style.display = 'none';
+    bossBarFill.className = '';
+    bossBarBg.classList.remove('shielded');
+    ships = [];
+    nextShipFrame = 300;
+    lastOdHud = -1;
+    stopLaserHum();
+    gameWrapper.style.setProperty('--beam', spec.beamColor);
 
     player = {
       spec,
@@ -709,7 +988,9 @@
       wingmenPower: 1,
       bombs: 3,
       invuln: 0,
-      bank: 0
+      bank: 0,
+      overdrive: 0,
+      laser: 0
     };
 
     wingmen = [];
@@ -732,6 +1013,7 @@
 
   function updateHUD() {
     planeHudLabel.textContent = player.spec.name;
+    updateOverdriveHUD();
     hpFill.style.width = `${Math.max(0, (player.hp / player.maxHp) * 100)}%`;
     weaponBadge.textContent = `WPN LV.${player.weaponLevel}`;
     wingmenBadge.textContent = `DRONES: ${player.wingmenCount}${player.wingmenPower > 1 ? '+' : ''}`;
@@ -741,17 +1023,19 @@
     waveBadge.textContent = `WAVE ${wave}`;
     if (score > highScore) {
       highScore = score;
-      localStorage.setItem('1945_hi_score_v2', highScore);
+      try {
+        localStorage.setItem('1945_hi_score_v2', highScore);
+      } catch (err) { /* storage unavailable */ }
     }
     hiBadge.textContent = `HI: ${highScore}`;
   }
 
-  function addFloatingText(x, y, text, color = '#fbbf24') {
-    floatingTexts.push({ x, y, text, color, life: 45 });
+  function addFloatingText(x, y, text, color = '#fbbf24', life = 45) {
+    floatingTexts.push({ x, y, text, color, life });
   }
 
-  function spawnExplosion(x, y, count = 18, big = false) {
-    playSound('explosion');
+  function spawnExplosion(x, y, count = 18, big = false, silent = false) {
+    if (!silent) playSound('explosion');
     if (big) screenShake = Math.max(screenShake, 12);
     const colors = ['#fef08a', '#fbbf24', '#f97316', '#ef4444', '#94a3b8'];
     for (let i = 0; i < count; i++) {
@@ -784,9 +1068,15 @@
       spawnExplosion(e.x, e.y, 12, false);
     });
     if (boss) {
-      boss.hp -= 220;
+      damageBoss(220);
       spawnExplosion(boss.x, boss.y, 25, true);
     }
+    ships.forEach((s) => {
+      if (s.sinking) return;
+      s.turrets.forEach((t) => damageTurret(s, t, 90));
+      damageHull(s, 180);
+      spawnExplosion(s.x, s.y, 14, false, true);
+    });
     updateHUD();
   }
 
@@ -861,6 +1151,29 @@
         best = e;
       }
     }
+    for (let i = 0; i < ships.length; i++) {
+      const s = ships[i];
+      if (s.sinking || s.y + s.h / 2 < 0) continue;
+      let gunsLeft = false;
+      for (const t of s.turrets) {
+        if (t.hp <= 0) continue;
+        gunsLeft = true;
+        if (t.y < 0) continue;
+        const d = Math.hypot(t.x - fromX, t.y - fromY);
+        if (d < bestDist) {
+          bestDist = d;
+          best = t;
+        }
+      }
+      // Once the AA guns are silenced, the hull itself becomes the lock-on target
+      if (!gunsLeft) {
+        const d = Math.hypot(s.x - fromX, s.y - fromY);
+        if (d < bestDist) {
+          bestDist = d;
+          best = s;
+        }
+      }
+    }
     return best;
   }
 
@@ -909,11 +1222,699 @@
     }
   }
 
+  // ======================================================
+  //  ENEMY KILL HELPER
+  // ======================================================
+  function destroyEnemy(k) {
+    const e = enemies[k];
+    score += e.score;
+    spawnExplosion(e.x, e.y, e.type === 'gunship' ? 26 : 14, e.type === 'gunship');
+    addFloatingText(e.x, e.y, `+${e.score}`);
+    maybeDropPowerup(e.x, e.y, e.type === 'gunship');
+    addOverdrive(e.type === 'gunship' ? 9 : e.type === 'ace' ? 5 : 3);
+    enemies.splice(k, 1);
+    updateHUD();
+  }
+
+  // ======================================================
+  //  OVERDRIVE LASER BEAM
+  // ======================================================
+  function addOverdrive(amount) {
+    if (!player || player.laser > 0) return;
+    const before = player.overdrive;
+    player.overdrive = Math.min(100, player.overdrive + amount);
+    if (before < 100 && player.overdrive >= 100) {
+      playSound('odReady');
+      addFloatingText(player.x, player.y - 36, 'OVERDRIVE READY [L]', player.spec.beamColor, 60);
+    }
+  }
+
+  function updateOverdriveHUD() {
+    if (!player) return;
+    const active = player.laser > 0;
+    const pct = active
+      ? Math.ceil((player.laser / LASER_DURATION) * 100)
+      : Math.floor(player.overdrive);
+    const key = (active ? 1000 : 0) + pct;
+    if (key === lastOdHud) return;
+    lastOdHud = key;
+    odFill.style.width = `${pct}%`;
+    odFill.classList.toggle('ready', !active && pct >= 100);
+    odFill.classList.toggle('firing', active);
+    odLabel.textContent = active ? 'FIRING' : pct >= 100 ? 'READY [L]' : `OD ${pct}%`;
+    laserBtn.style.setProperty('--charge', pct);
+    laserBtn.classList.toggle('ready', !active && pct >= 100);
+  }
+
+  function activateOverdrive() {
+    if (!running || paused || !player || player.laser > 0) return;
+    if (player.overdrive < 100) {
+      if (frameCount - lastOdMsgFrame > 40) {
+        lastOdMsgFrame = frameCount;
+        addFloatingText(player.x, player.y - 36, `CHARGING ${Math.floor(player.overdrive)}%`, '#94a3b8', 30);
+      }
+      return;
+    }
+    player.overdrive = 0;
+    player.laser = LASER_DURATION;
+    screenShake = Math.max(screenShake, 8);
+    playSound('laserStart');
+    startLaserHum();
+    addFloatingText(W / 2, H / 2 + 40, '⚡ OVERDRIVE LASER ⚡', player.spec.beamColor, 60);
+    updateOverdriveHUD();
+  }
+
+  function laserHalfWidth() {
+    const t = player.laser;
+    const ramp = Math.max(0.25, Math.min(1, (LASER_DURATION - t) / 12, t / 20));
+    return (11 + player.weaponLevel * 2.5) * ramp;
+  }
+
+  function laserSpark(x, y) {
+    particles.push({
+      x: x + (Math.random() - 0.5) * 10,
+      y,
+      vx: (Math.random() - 0.5) * 4,
+      vy: 1 + Math.random() * 2.5,
+      size: 2 + Math.random() * 2,
+      color: Math.random() < 0.5 ? '#ffffff' : player.spec.beamColor,
+      life: 12,
+      maxLife: 12
+    });
+  }
+
+  function updateLaser() {
+    if (player.laser <= 0) return;
+    player.laser--;
+    const hw = laserHalfWidth();
+    const bx = player.x;
+    const bottom = player.y - 22;
+    const dmg = 2.2 + player.weaponLevel * 0.45;
+
+    // Aircraft (deaths are swept up in the enemy update loop)
+    enemies.forEach((e) => {
+      if (e.y - e.h / 2 < bottom && e.y > -20 && Math.abs(e.x - bx) < hw + e.w * 0.45) {
+        e.hp -= dmg;
+        if (frameCount % 3 === 0) laserSpark(e.x, e.y + e.h / 2);
+      }
+    });
+
+    // Boss
+    if (boss && boss.hp > 0 && boss.y < bottom && Math.abs(boss.x - bx) < hw + boss.w / 2) {
+      damageBoss(dmg * 0.85);
+      if (frameCount % 2 === 0) laserSpark(bx, boss.y + boss.h / 2);
+    }
+
+    // Battleships: turrets first, then the hull
+    ships.forEach((s) => {
+      if (s.sinking) return;
+      s.turrets.forEach((t) => {
+        if (t.hp > 0 && t.y < bottom && Math.abs(t.x - bx) < hw + t.r) {
+          damageTurret(s, t, dmg);
+          if (frameCount % 3 === 0) laserSpark(t.x, t.y);
+        }
+      });
+      if (!s.sinking && s.y - s.h / 2 < bottom && Math.abs(s.x - bx) < hw + s.w / 2 - 4) {
+        damageHull(s, dmg * 0.9);
+      }
+    });
+
+    // The beam vaporises enemy fire inside its column
+    for (let i = enemyBullets.length - 1; i >= 0; i--) {
+      const eb = enemyBullets[i];
+      if (eb.y < bottom + 8 && Math.abs(eb.x - bx) < hw + eb.r) {
+        if (Math.random() < 0.4) laserSpark(eb.x, eb.y);
+        enemyBullets.splice(i, 1);
+      }
+    }
+
+    if (player.laser <= 0) {
+      stopLaserHum();
+    }
+  }
+
+  // ======================================================
+  //  NAVAL BATTLESHIPS WITH AA TURRETS
+  // ======================================================
+  function spawnBattleship() {
+    const lane = Math.random() < 0.5 ? -1 : 1;
+    const x = Math.max(70, Math.min(W - 70, W / 2 + lane * (60 + Math.random() * 110)));
+    const y = -130;
+    const turretHp = 55 + wave * 16;
+    // Bow points down-screen (the ship steams toward the squadron)
+    const layout = [
+      { ox: 0, oy: 72, kind: 'flak' },
+      { ox: -15, oy: 38, kind: 'pom' },
+      { ox: 15, oy: 38, kind: 'pom' },
+      { ox: 0, oy: -74, kind: 'flak' },
+      { ox: -16, oy: -46, kind: 'pom' },
+      { ox: 16, oy: -46, kind: 'pom' }
+    ];
+    const slots = wave >= 2 ? layout : layout.slice(0, 4);
+    const hullHp = 420 + wave * 150;
+    ships.push({
+      x,
+      y,
+      w: 58,
+      h: 216,
+      vy: 0.95 + Math.min(0.35, wave * 0.04),
+      hp: hullHp,
+      maxHp: hullHp,
+      hitFlash: 0,
+      sinking: 0,
+      sinkDir: lane,
+      silenced: false,
+      turrets: slots.map((s) => {
+        const hp = Math.round(turretHp * (s.kind === 'flak' ? 1.4 : 1));
+        return {
+          ...s,
+          r: s.kind === 'flak' ? 10 : 8,
+          hp,
+          maxHp: hp,
+          angle: Math.PI / 2,
+          cooldown: 50 + Math.random() * 70,
+          burst: 0,
+          burstTimer: 0,
+          flash: 0,
+          hitFlash: 0,
+          x: x + s.ox,
+          y: y + s.oy
+        };
+      })
+    });
+    addFloatingText(x, 170, '⚓ BATTLESHIP SIGHTED ⚓', '#fca5a5', 60);
+  }
+
+  function hullHalfWidthAt(s, y) {
+    // Tapered bow at +h/2
+    const fromBow = s.y + s.h / 2 - y;
+    return (s.w / 2) * Math.min(1, Math.max(0.15, fromBow / 70));
+  }
+
+  function damageTurret(s, t, dmg) {
+    if (t.hp <= 0 || s.sinking) return;
+    t.hp -= dmg;
+    t.hitFlash = 4;
+    if (t.hp <= 0) {
+      t.hp = 0;
+      spawnExplosion(t.x, t.y, 14, false);
+      score += 300;
+      addFloatingText(t.x, t.y, '+300', '#fde047');
+      addOverdrive(6);
+      if (!s.silenced && s.turrets.every((tt) => tt.hp <= 0)) {
+        s.silenced = true;
+        score += 500;
+        addFloatingText(s.x, s.y, 'AA SILENCED +500', '#22c55e', 60);
+      }
+      updateHUD();
+    }
+  }
+
+  function damageHull(s, dmg) {
+    if (s.sinking) return;
+    s.hp -= dmg;
+    s.hitFlash = 3;
+    if (s.hp <= 0) sinkShip(s);
+  }
+
+  function sinkShip(s) {
+    s.hp = 0;
+    s.sinking = 150;
+    s.vy = 0.65;
+    s.turrets.forEach((t) => { t.hp = 0; });
+    const reward = 2000 + wave * 250;
+    score += reward;
+    spawnExplosion(s.x, s.y, 50, true);
+    playSound('sink');
+    addFloatingText(s.x, s.y - 20, `BATTLESHIP SUNK! +${reward}`, '#22c55e', 70);
+    addOverdrive(20);
+    maybeDropPowerup(s.x - 18, s.y, true);
+    maybeDropPowerup(s.x + 18, s.y + 30, true);
+    updateHUD();
+  }
+
+  function hitShips(x, y, dmg) {
+    for (let i = 0; i < ships.length; i++) {
+      const s = ships[i];
+      if (s.sinking) continue;
+      if (Math.abs(x - s.x) > s.w / 2 + 4 || Math.abs(y - s.y) > s.h / 2) continue;
+      for (const t of s.turrets) {
+        if (t.hp > 0 && Math.hypot(x - t.x, y - t.y) < t.r + 4) {
+          damageTurret(s, t, dmg);
+          return true;
+        }
+      }
+      if (Math.abs(x - s.x) < hullHalfWidthAt(s, y)) {
+        damageHull(s, dmg);
+        return true;
+      }
+    }
+    return false;
+  }
+
+  function playFlakSound() {
+    if (frameCount - lastFlakSound > 6) {
+      lastFlakSound = frameCount;
+      playSound('flak');
+    }
+  }
+
+  function fireFlak(t) {
+    const tipX = t.x + Math.cos(t.angle) * 20;
+    const tipY = t.y + Math.sin(t.angle) * 20;
+    const spd = 3.3 + wave * 0.08;
+    const dist = Math.hypot(player.x - tipX, player.y - tipY);
+    enemyBullets.push({
+      x: tipX,
+      y: tipY,
+      vx: Math.cos(t.angle) * spd,
+      vy: Math.sin(t.angle) * spd,
+      r: 4.6,
+      color: '#a8a29e',
+      kind: 'flak',
+      fuse: Math.max(18, (dist / spd) * (0.8 + Math.random() * 0.25)),
+      dmg: 18
+    });
+    t.flash = 6;
+    playFlakSound();
+  }
+
+  function firePom(t) {
+    const tipX = t.x + Math.cos(t.angle) * 15;
+    const tipY = t.y + Math.sin(t.angle) * 15;
+    const ang = t.angle + (Math.random() - 0.5) * 0.12;
+    enemyBullets.push({
+      x: tipX,
+      y: tipY,
+      vx: Math.cos(ang) * 4.8,
+      vy: Math.sin(ang) * 4.8,
+      r: 2.7,
+      color: '#fde047',
+      dmg: 9
+    });
+    t.flash = 3;
+  }
+
+  function burstFlak(eb) {
+    const n = 7;
+    const off = Math.random() * Math.PI;
+    for (let k = 0; k < n; k++) {
+      const a = off + (k / n) * Math.PI * 2;
+      enemyBullets.push({
+        x: eb.x,
+        y: eb.y,
+        vx: Math.cos(a) * 2.3,
+        vy: Math.sin(a) * 2.3,
+        r: 2.5,
+        color: '#fb923c',
+        life: 32,
+        dmg: 10
+      });
+    }
+    for (let k = 0; k < 5; k++) {
+      particles.push({
+        x: eb.x + (Math.random() - 0.5) * 8,
+        y: eb.y + (Math.random() - 0.5) * 8,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: 0.4 + Math.random() * 0.4,
+        size: 6 + Math.random() * 5,
+        color: k === 0 ? '#fdba74' : '#44403c',
+        life: 26,
+        maxLife: 26
+      });
+    }
+    playFlakSound();
+  }
+
+  function updateShips() {
+    for (let i = ships.length - 1; i >= 0; i--) {
+      const s = ships[i];
+      s.y += s.vy;
+      if (s.hitFlash > 0) s.hitFlash--;
+      s.turrets.forEach((t) => {
+        t.x = s.x + t.ox;
+        t.y = s.y + t.oy;
+      });
+
+      if (s.sinking > 0) {
+        s.sinking--;
+        if (s.sinking % 10 === 0) {
+          spawnExplosion(
+            s.x + (Math.random() - 0.5) * s.w,
+            s.y + (Math.random() - 0.5) * s.h * 0.8,
+            10,
+            false,
+            s.sinking % 30 !== 0
+          );
+        }
+        if (frameCount % 3 === 0) {
+          particles.push({
+            x: s.x + (Math.random() - 0.5) * s.w * 1.2,
+            y: s.y + (Math.random() - 0.5) * s.h,
+            vx: 0,
+            vy: 0.5,
+            size: 2 + Math.random() * 3,
+            color: '#e0f2fe',
+            life: 22,
+            maxLife: 22
+          });
+        }
+        if (s.sinking <= 0) ships.splice(i, 1);
+        continue;
+      }
+
+      // Funnel smoke
+      if (frameCount % 5 === 0) {
+        particles.push({
+          x: s.x + (Math.random() - 0.5) * 4,
+          y: s.y - 24,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: 0.55,
+          size: 4 + Math.random() * 3,
+          color: '#64748b',
+          life: 40,
+          maxLife: 40
+        });
+      }
+
+      // AA turret tracking and fire control
+      s.turrets.forEach((t) => {
+        if (t.hp <= 0) {
+          if (frameCount % 10 === 0) {
+            particles.push({ x: t.x, y: t.y, vx: 0, vy: 0.6, size: 4, color: '#57534e', life: 30, maxLife: 30 });
+          }
+          return;
+        }
+        if (t.hitFlash > 0) t.hitFlash--;
+        if (t.flash > 0) t.flash--;
+
+        const desired = Math.atan2(player.y - t.y, player.x - t.x);
+        let diff = desired - t.angle;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        t.angle += Math.max(-0.06, Math.min(0.06, diff));
+
+        // Only engage while above the squadron and on-screen
+        if (t.y < 20 || t.y > player.y - 40) return;
+
+        t.cooldown--;
+        if (t.kind === 'flak') {
+          if (t.cooldown <= 0 && Math.abs(diff) < 0.4) {
+            fireFlak(t);
+            t.cooldown = Math.max(70, 120 - wave * 6) + Math.random() * 30;
+          }
+        } else if (t.burst > 0) {
+          t.burstTimer--;
+          if (t.burstTimer <= 0) {
+            firePom(t);
+            t.burst--;
+            t.burstTimer = 5;
+          }
+        } else if (t.cooldown <= 0 && Math.abs(diff) < 0.4) {
+          t.burst = 3;
+          t.burstTimer = 0;
+          t.cooldown = Math.max(55, 95 - wave * 5) + Math.random() * 25;
+        }
+      });
+
+      if (s.y - s.h / 2 > H + 40) ships.splice(i, 1);
+    }
+  }
+
+  // ======================================================
+  //  MULTI-PHASE BOSS: IRON VALKYRIE
+  // ======================================================
+  const BOSS_PHASE_LABELS = ['', 'PHASE I: HEAVY BOMBER', 'PHASE II: ARMOR PURGED', 'PHASE III: BERSERK CORE'];
+
+  function updateBossHud() {
+    if (!boss) return;
+    bossBarFill.className = boss.phase === 1 ? '' : `p${boss.phase}`;
+    bossPhaseEl.textContent = boss.transform > 0
+      ? 'TRANSFORMING: SHIELDED'
+      : BOSS_PHASE_LABELS[boss.phase];
+    bossBarBg.classList.toggle('shielded', boss.transform > 0);
+  }
+
+  // Returns true if the damage landed (false while shielded)
+  function damageBoss(amount) {
+    if (!boss || boss.hp <= 0 || boss.transform > 0) return false;
+    boss.hitFlash = 3;
+    if (boss.phase < 3) {
+      const threshold = boss.phase === 1 ? (boss.maxHp * 2) / 3 : boss.maxHp / 3;
+      if (boss.hp - amount <= threshold) {
+        boss.hp = threshold;
+        startBossTransform(boss.phase + 1);
+        return true;
+      }
+    }
+    boss.hp -= amount;
+    return true;
+  }
+
+  function startBossTransform(next) {
+    boss.transform = 120;
+    boss.pendingPhase = next;
+    boss.beam = null;
+    enemyBullets = [];
+    screenShake = Math.max(screenShake, 16);
+    playSound('transform');
+    const label = next === 2 ? 'PHASE II: ARMOR PURGE' : 'PHASE III: BERSERK CORE';
+    addFloatingText(W / 2, H / 2 - 60, `⚠️ ${label} ⚠️`, '#f97316', 90);
+    for (let k = 0; k < 24; k++) {
+      const a = Math.random() * Math.PI * 2;
+      const spd = 1.5 + Math.random() * 4;
+      particles.push({
+        x: boss.x + (Math.random() - 0.5) * boss.w,
+        y: boss.y + (Math.random() - 0.5) * boss.h,
+        vx: Math.cos(a) * spd,
+        vy: Math.sin(a) * spd + 1,
+        size: 4 + Math.random() * 5,
+        color: Math.random() < 0.5 ? '#64748b' : '#94a3b8',
+        life: 50,
+        maxLife: 50
+      });
+    }
+    addOverdrive(12);
+    updateBossHud();
+  }
+
+  function killBoss() {
+    const b = boss;
+    spawnExplosion(b.x, b.y, 65, true);
+    spawnExplosion(b.x - 40, b.y + 10, 25, false, true);
+    spawnExplosion(b.x + 40, b.y - 10, 25, false, true);
+    score += 2500 * wave;
+    addFloatingText(b.x, b.y, `BOSS DESTROYED! +${2500 * wave}`, '#22c55e', 70);
+    maybeDropPowerup(b.x - 28, b.y, true);
+    maybeDropPowerup(b.x + 28, b.y, true);
+    boss = null;
+    bossHud.style.display = 'none';
+    bossBarBg.classList.remove('shielded');
+    wave++;
+    addOverdrive(25);
+    updateHUD();
+  }
+
+  function bossShot(x, y, ang, spd, r, color) {
+    enemyBullets.push({ x, y, vx: Math.cos(ang) * spd, vy: Math.sin(ang) * spd, r, color });
+  }
+
+  function updateBoss() {
+    if (!boss) return;
+    const b = boss;
+    b.timer++;
+    if (b.hitFlash > 0) b.hitFlash--;
+
+    // Player bullets vs boss
+    for (let j = bullets.length - 1; j >= 0; j--) {
+      const bl = bullets[j];
+      if (Math.abs(bl.x - b.x) < b.w / 2 && Math.abs(bl.y - b.y) < b.h / 2) {
+        const landed = damageBoss(bl.dmg);
+        bullets.splice(j, 1);
+        particles.push({
+          x: bl.x,
+          y: bl.y,
+          vx: (Math.random() - 0.5) * 3,
+          vy: 1 + Math.random() * 2,
+          size: 3,
+          color: landed ? '#fef08a' : '#e2e8f0',
+          life: 10,
+          maxLife: 10
+        });
+        if (b.hp <= 0) break;
+      }
+    }
+
+    if (b.hp <= 0) {
+      killBoss();
+      return;
+    }
+    bossBarFill.style.width = `${Math.max(0, (b.hp / b.maxHp) * 100)}%`;
+
+    // --- Transformation sequence (invulnerable) ---
+    if (b.transform > 0) {
+      b.transform--;
+      b.x += (W / 2 - b.x) * 0.03;
+      b.y += (b.targetY - b.y) * 0.05;
+      if (b.transform % 9 === 0) {
+        spawnExplosion(
+          b.x + (Math.random() - 0.5) * b.w,
+          b.y + (Math.random() - 0.5) * b.h,
+          8,
+          false,
+          true
+        );
+      }
+      if (b.transform === 60) {
+        b.phase = b.pendingPhase;
+        b.atk = 0;
+        b.spin = 0;
+        if (b.phase === 2) b.vx = Math.sign(b.vx || 1) * 2.6;
+        if (b.phase === 3) {
+          b.w = 116;
+          b.h = 72;
+        }
+        spawnExplosion(b.x, b.y, 45, true);
+      }
+      if (b.transform === 0 || b.transform === 60) updateBossHud();
+      return;
+    }
+
+    b.atk++;
+    const atk = b.atk;
+
+    if (b.phase === 1) {
+      // Heavy bomber: patrol + fan spread + aimed twin shots
+      if (b.y < b.targetY) {
+        b.y += 1.5;
+      } else {
+        b.x += b.vx;
+        if (b.x < 95) b.vx = Math.abs(b.vx);
+        if (b.x > W - 95) b.vx = -Math.abs(b.vx);
+      }
+      if (atk % 48 === 0) {
+        const count = 9 + Math.min(6, wave);
+        for (let k = 0; k < count; k++) {
+          const ang = (Math.PI * 0.15) + (k / (count - 1)) * (Math.PI * 0.7);
+          bossShot(b.x, b.y + 30, ang, 3.4, 4.5, '#f43f5e');
+        }
+      }
+      if (atk % 70 === 0) {
+        const ang = Math.atan2(player.y - b.y, player.x - b.x);
+        [-42, 42].forEach((ox) => bossShot(b.x + ox, b.y + 25, ang, 4.8, 5, '#fbbf24'));
+      }
+    } else if (b.phase === 2) {
+      // Armor purged: faster weave, twin spiral, wing-pod bursts, escort scouts
+      b.x += b.vx;
+      if (b.x < 95) b.vx = Math.abs(b.vx);
+      if (b.x > W - 95) b.vx = -Math.abs(b.vx);
+      b.y += (b.targetY + Math.sin(b.timer * 0.035) * 28 - b.y) * 0.1;
+
+      if (atk % 220 < 100 && atk % 5 === 0) {
+        for (let arm = 0; arm < 2; arm++) {
+          bossShot(b.x, b.y + 8, b.spin + arm * Math.PI, 3.0, 4, '#c084fc');
+        }
+        b.spin += 0.27;
+      }
+      if (atk % 60 === 30) {
+        [-66, 66].forEach((ox) => {
+          const base = Math.atan2(player.y - b.y, player.x - (b.x + ox));
+          [-0.16, 0, 0.16].forEach((spread) => bossShot(b.x + ox, b.y + 18, base + spread, 4.6, 4.2, '#fbbf24'));
+        });
+      }
+      if (atk % 320 === 160 && enemies.length < 10) {
+        [-1, 1].forEach((side) => {
+          enemies.push({
+            type: 'scout',
+            x: side < 0 ? 40 : W - 40,
+            y: -30,
+            w: 32,
+            h: 32,
+            vx: -side * 0.9,
+            vy: 2.6 + wave * 0.1,
+            hp: 25 + wave * 7,
+            score: 100,
+            shootTimer: 40
+          });
+        });
+        addFloatingText(W / 2, 200, 'ESCORTS INBOUND', '#fca5a5');
+      }
+    } else {
+      // Berserk core: hunts your lane, ring bursts, telegraphed core beam
+      if (!b.beam) {
+        b.x += (player.x - b.x) * 0.018 + Math.sin(b.timer * 0.05) * 1.2;
+        b.x = Math.max(70, Math.min(W - 70, b.x));
+        b.y += (b.targetY + 10 + Math.sin(b.timer * 0.06) * 14 - b.y) * 0.1;
+      }
+
+      const firing = b.beam && b.beam.warn <= 0;
+      if (!firing && atk % 64 === 0) {
+        const n = 16 + Math.min(6, wave);
+        const off = atk * 0.05;
+        for (let k = 0; k < n; k++) {
+          bossShot(b.x, b.y, off + (k / n) * Math.PI * 2, 2.9, 4.5, '#f43f5e');
+        }
+      }
+      if (!b.beam && atk % 38 === 19) {
+        bossShot(b.x, b.y + 20, Math.atan2(player.y - b.y, player.x - b.x), 5.6, 4, '#fde047');
+      }
+
+      if (!b.beam && atk % 280 === 140) {
+        b.beam = { x: b.x, warn: 70, fire: 0 };
+        playSound('bossWarn');
+      }
+      if (b.beam) {
+        const bm = b.beam;
+        bm.x = b.x;
+        if (bm.warn > 0) {
+          bm.warn--;
+          if (bm.warn === 0) {
+            bm.fire = 56;
+            playSound('bossBeam');
+            screenShake = Math.max(screenShake, 8);
+          }
+        } else {
+          bm.fire--;
+          if (Math.abs(player.x - bm.x) < 30 && player.y > b.y) damagePlayer(24);
+          if (bm.fire <= 0) b.beam = null;
+        }
+      }
+
+      if (frameCount % 3 === 0) {
+        particles.push({
+          x: b.x + (Math.random() - 0.5) * 40,
+          y: b.y + (Math.random() - 0.5) * 30,
+          vx: (Math.random() - 0.5) * 0.8,
+          vy: 1 + Math.random(),
+          size: 3 + Math.random() * 3,
+          color: Math.random() < 0.5 ? '#f97316' : '#57534e',
+          life: 24,
+          maxLife: 24
+        });
+      }
+    }
+
+    // Ramming the boss hurts
+    if (running && Math.abs(player.x - b.x) < b.w / 2 && Math.abs(player.y - b.y) < b.h / 2) {
+      damagePlayer(30);
+    }
+  }
+
   function spawnEnemyWave() {
     if (boss) return;
 
+    // Naval battleship spawns
+    if (frameCount >= nextShipFrame) {
+      const maxShips = wave >= 3 ? 2 : 1;
+      const untilBoss = 950 - (frameCount % 950);
+      if (ships.filter((s) => !s.sinking).length < maxShips && untilBoss > 500) {
+        spawnBattleship();
+      }
+      nextShipFrame = frameCount + Math.max(360, 640 - wave * 45) + Math.floor(Math.random() * 180);
+    }
+
     if (frameCount > 0 && frameCount % 950 === 0) {
-      const maxHp = 750 + wave * 420;
+      const maxHp = 1200 + wave * 600; // three phases, so more total armor
       boss = {
         x: W / 2,
         y: -80,
@@ -923,9 +1924,18 @@
         vx: 1.9,
         hp: maxHp,
         maxHp: maxHp,
-        timer: 0
+        timer: 0,
+        atk: 0,
+        phase: 1,
+        pendingPhase: 1,
+        transform: 0,
+        spin: 0,
+        beam: null,
+        hitFlash: 0
       };
       bossNameEl.textContent = `⚠️ WAVE ${wave} BOSS: IRON VALKYRIE MK-${wave} ⚠️`;
+      bossBarFill.style.width = '100%';
+      updateBossHud();
       bossHud.style.display = 'flex';
       addFloatingText(W / 2, H / 2 - 40, '⚠️ WARNING: HEAVY BOMBER APPROACHING ⚠️', '#ef4444');
       return;
@@ -1014,6 +2024,8 @@
     if (player.hp <= 0) {
       spawnExplosion(player.x, player.y, 45, true);
       running = false;
+      player.laser = 0;
+      stopLaserHum();
       finalScoreEl.textContent = score;
       finalHiEl.textContent = highScore;
       finalWaveEl.textContent = wave;
@@ -1029,6 +2041,8 @@
     if (screenShake < 0.5) screenShake = 0;
     if (airstrikeFlash > 0) airstrikeFlash--;
     if (player.invuln > 0) player.invuln--;
+    if (player.laser <= 0) addOverdrive(0.045);
+    updateOverdriveHUD();
 
     islands.forEach((isl) => {
       isl.y += 0.65;
@@ -1082,7 +2096,7 @@
     });
 
     // Fire Main Guns
-    if (frameCount % player.spec.fireInterval === 0) {
+    if (player.laser <= 0 && frameCount % player.spec.fireInterval === 0) {
       firePlayerWeapons();
     }
 
@@ -1092,7 +2106,7 @@
     }
 
     // Fire Homing Missiles
-    if (frameCount % player.spec.missileInterval === 0 && (enemies.length > 0 || boss)) {
+    if (frameCount % player.spec.missileInterval === 0 && (enemies.length > 0 || boss || ships.length > 0)) {
       fireHomingMissiles();
     }
 
@@ -1145,110 +2159,51 @@
       }
 
       // Check Missile collision with Boss
-      if (boss && Math.abs(m.x - boss.x) < boss.w / 2 && Math.abs(m.y - boss.y) < boss.h / 2) {
-        boss.hp -= m.dmg;
+      if (boss && boss.hp > 0 && Math.abs(m.x - boss.x) < boss.w / 2 && Math.abs(m.y - boss.y) < boss.h / 2) {
+        damageBoss(m.dmg);
         spawnExplosion(m.x, m.y, 6, false);
         missiles.splice(i, 1);
         continue;
       }
 
       // Check Missile collision with Enemies
+      let missileHit = false;
       for (let k = enemies.length - 1; k >= 0; k--) {
         const e = enemies[k];
         if (Math.hypot(m.x - e.x, m.y - e.y) < e.w * 0.6) {
           e.hp -= m.dmg;
           spawnExplosion(m.x, m.y, 7, false);
-          missiles.splice(i, 1);
-          if (e.hp <= 0) {
-            score += e.score;
-            spawnExplosion(e.x, e.y, e.type === 'gunship' ? 26 : 14, e.type === 'gunship');
-            addFloatingText(e.x, e.y, `+${e.score}`);
-            maybeDropPowerup(e.x, e.y, e.type === 'gunship');
-            enemies.splice(k, 1);
-            updateHUD();
-          }
+          missileHit = true;
+          if (e.hp <= 0) destroyEnemy(k);
           break;
         }
+      }
+      if (missileHit) {
+        missiles.splice(i, 1);
+        continue;
+      }
+
+      // Check Missile collision with Battleships
+      if (hitShips(m.x, m.y, m.dmg)) {
+        spawnExplosion(m.x, m.y, 7, false, true);
+        missiles.splice(i, 1);
       }
     }
 
     spawnEnemyWave();
-
-    // Update Boss
-    if (boss) {
-      boss.timer++;
-      if (boss.y < boss.targetY) {
-        boss.y += 1.5;
-      } else {
-        boss.x += boss.vx;
-        if (boss.x < 95 || boss.x > W - 95) boss.vx *= -1;
-      }
-
-      if (boss.timer % 48 === 0) {
-        const count = 9 + Math.min(6, wave);
-        for (let k = 0; k < count; k++) {
-          const ang = (Math.PI * 0.15) + (k / (count - 1)) * (Math.PI * 0.7);
-          enemyBullets.push({
-            x: boss.x,
-            y: boss.y + 30,
-            vx: Math.cos(ang) * 3.4,
-            vy: Math.sin(ang) * 3.4,
-            r: 4.5,
-            color: '#f43f5e'
-          });
-        }
-      }
-      if (boss.timer % 70 === 0) {
-        const ang = Math.atan2(player.y - boss.y, player.x - boss.x);
-        [-42, 42].forEach((offsetX) => {
-          enemyBullets.push({
-            x: boss.x + offsetX,
-            y: boss.y + 25,
-            vx: Math.cos(ang) * 4.8,
-            vy: Math.sin(ang) * 4.8,
-            r: 5,
-            color: '#fbbf24'
-          });
-        });
-      }
-
-      for (let j = bullets.length - 1; j >= 0; j--) {
-        const b = bullets[j];
-        if (Math.abs(b.x - boss.x) < boss.w / 2 && Math.abs(b.y - boss.y) < boss.h / 2) {
-          boss.hp -= b.dmg;
-          bullets.splice(j, 1);
-          particles.push({
-            x: b.x,
-            y: b.y,
-            vx: (Math.random() - 0.5) * 3,
-            vy: 1 + Math.random() * 2,
-            size: 3,
-            color: '#fef08a',
-            life: 10,
-            maxLife: 10
-          });
-          if (boss.hp <= 0) break;
-        }
-      }
-
-      if (boss && boss.hp <= 0) {
-        spawnExplosion(boss.x, boss.y, 65, true);
-        score += 2500 * wave;
-        addFloatingText(boss.x, boss.y, `BOSS DESTROYED! +${2500 * wave}`, '#22c55e');
-        maybeDropPowerup(boss.x - 28, boss.y, true);
-        maybeDropPowerup(boss.x + 28, boss.y, true);
-        boss = null;
-        bossHud.style.display = 'none';
-        wave++;
-        updateHUD();
-      } else if (boss) {
-        bossBarFill.style.width = `${Math.max(0, (boss.hp / boss.maxHp) * 100)}%`;
-      }
-    }
+    updateShips();
+    updateLaser();
+    updateBoss();
+    if (!running) return;
 
     // Update Regular Enemies
     for (let i = enemies.length - 1; i >= 0; i--) {
       const e = enemies[i];
+      if (e.hp <= 0) {
+        // Killed by laser or air strike
+        destroyEnemy(i);
+        continue;
+      }
       if (e.type === 'ace') {
         e.angle += 0.06;
         e.x = e.baseX + Math.sin(e.angle) * 55;
@@ -1293,12 +2248,7 @@
           e.hp -= b.dmg;
           bullets.splice(j, 1);
           if (e.hp <= 0) {
-            score += e.score;
-            spawnExplosion(e.x, e.y, e.type === 'gunship' ? 26 : 14, e.type === 'gunship');
-            addFloatingText(e.x, e.y, `+${e.score}`);
-            maybeDropPowerup(e.x, e.y, e.type === 'gunship');
-            enemies.splice(i, 1);
-            updateHUD();
+            destroyEnemy(i);
             destroyed = true;
             break;
           }
@@ -1318,14 +2268,50 @@
       }
     }
 
+    // Player Bullets vs Battleships
+    if (ships.length > 0) {
+      for (let j = bullets.length - 1; j >= 0; j--) {
+        const b = bullets[j];
+        if (hitShips(b.x, b.y, b.dmg)) {
+          particles.push({
+            x: b.x,
+            y: b.y,
+            vx: (Math.random() - 0.5) * 2.5,
+            vy: 0.5 + Math.random() * 1.5,
+            size: 2.5,
+            color: '#e5e7eb',
+            life: 9,
+            maxLife: 9
+          });
+          bullets.splice(j, 1);
+        }
+      }
+    }
+
     // Update Enemy Bullets
     for (let i = enemyBullets.length - 1; i >= 0; i--) {
       const eb = enemyBullets[i];
       eb.x += eb.vx;
       eb.y += eb.vy;
+      if (eb.fuse !== undefined) {
+        eb.fuse--;
+        if (eb.fuse <= 0) {
+          enemyBullets.splice(i, 1);
+          burstFlak(eb);
+          continue;
+        }
+      }
+      if (eb.life !== undefined) {
+        eb.life--;
+        if (eb.life <= 0) {
+          enemyBullets.splice(i, 1);
+          continue;
+        }
+      }
       if (Math.hypot(eb.x - player.x, eb.y - player.y) < eb.r + 11) {
         enemyBullets.splice(i, 1);
-        damagePlayer(16);
+        damagePlayer(eb.dmg || 16);
+        if (!running) return;
         continue;
       }
       if (eb.y > H + 20 || eb.y < -20 || eb.x < -20 || eb.x > W + 20) {
@@ -1636,10 +2622,8 @@
     ctx.restore();
   }
 
-  function drawBoss(b) {
-    ctx.save();
-    ctx.translate(b.x, b.y);
-
+  // ---------- Boss forms ----------
+  function drawBossForm1() {
     ctx.fillStyle = '#334155';
     ctx.beginPath();
     ctx.moveTo(-75, -15);
@@ -1648,6 +2632,13 @@
     ctx.lineTo(-62, 18);
     ctx.closePath();
     ctx.fill();
+
+    // Riveted armor plates (these get purged in phase II)
+    ctx.strokeStyle = 'rgba(148, 163, 184, 0.35)';
+    ctx.lineWidth = 1;
+    [-64, -40, 40, 64].forEach((px) => {
+      ctx.strokeRect(px - 8, -12, 16, 26);
+    });
 
     ctx.fillStyle = '#1e293b';
     ctx.fillRect(-16, -42, 32, 82);
@@ -1664,7 +2655,426 @@
 
     ctx.fillStyle = '#f59e0b';
     ctx.fillRect(-10, -5, 20, 12);
+  }
 
+  function drawBossForm2(pulse) {
+    // Stripped wing frame
+    ctx.fillStyle = '#1e293b';
+    ctx.beginPath();
+    ctx.moveTo(-75, -15);
+    ctx.lineTo(75, -15);
+    ctx.lineTo(62, 18);
+    ctx.lineTo(-62, 18);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = '#64748b';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.beginPath();
+    [-62, -40, -18, 18, 40, 62].forEach((sx) => {
+      ctx.moveTo(sx, -14);
+      ctx.lineTo(sx * 0.86, 17);
+    });
+    ctx.stroke();
+
+    // Exposed, overheating engines
+    [-52, -28, 28, 52].forEach((ox) => {
+      const r = 10 + pulse * 2.5;
+      const g = ctx.createRadialGradient(ox, 2, 1, ox, 2, r);
+      g.addColorStop(0, '#fff7ed');
+      g.addColorStop(0.45, '#fb923c');
+      g.addColorStop(1, 'rgba(249, 115, 22, 0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(ox, 2, r, 0, Math.PI * 2);
+      ctx.fill();
+    });
+
+    // Wing gun pods
+    [-66, 66].forEach((ox) => {
+      ctx.fillStyle = '#78716c';
+      ctx.fillRect(ox - 7, -10, 14, 26);
+      ctx.fillStyle = '#1c1917';
+      ctx.fillRect(ox - 5, 14, 3, 10);
+      ctx.fillRect(ox + 2, 14, 3, 10);
+    });
+
+    // Fuselage with glowing vents
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(-16, -42, 32, 82);
+    ctx.fillStyle = `rgba(249, 115, 22, ${0.45 + pulse * 0.55})`;
+    [-32, -22, 18, 28].forEach((vy) => ctx.fillRect(-10, vy, 20, 3));
+    ctx.fillStyle = '#c084fc';
+    ctx.fillRect(-10, -5, 20, 12);
+  }
+
+  function drawBossForm3(pulse) {
+    // Shattered wing stubs
+    ctx.fillStyle = '#292524';
+    ctx.strokeStyle = '#7f1d1d';
+    ctx.lineWidth = 2;
+    [-1, 1].forEach((side) => {
+      ctx.beginPath();
+      ctx.moveTo(side * 14, -14);
+      ctx.lineTo(side * 50, -10);
+      ctx.lineTo(side * 42, -2);
+      ctx.lineTo(side * 54, 6);
+      ctx.lineTo(side * 38, 15);
+      ctx.lineTo(side * 14, 16);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#1c1917';
+      ctx.fillRect(side * 44 - 3, 6, 6, 14);
+      ctx.fillStyle = '#292524';
+    });
+
+    // Short fuselage
+    ctx.fillStyle = '#1c1917';
+    ctx.fillRect(-15, -34, 30, 66);
+
+    // Cracks leaking light
+    ctx.strokeStyle = `rgba(252, 165, 165, ${0.4 + pulse * 0.6})`;
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(-12, -30); ctx.lineTo(-4, -20); ctx.lineTo(-9, -12);
+    ctx.moveTo(11, 26); ctx.lineTo(4, 18); ctx.lineTo(9, 10);
+    ctx.moveTo(-30, -6); ctx.lineTo(-22, 2); ctx.lineTo(-28, 9);
+    ctx.moveTo(30, -6); ctx.lineTo(22, 2); ctx.lineTo(28, 9);
+    ctx.stroke();
+
+    // Exposed reactor core
+    const r = 14 + pulse * 3;
+    const g = ctx.createRadialGradient(0, 0, 1, 0, 0, r * 1.9);
+    g.addColorStop(0, '#ffffff');
+    g.addColorStop(0.35, '#f87171');
+    g.addColorStop(1, 'rgba(220, 38, 38, 0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(0, 0, r * 1.9, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.strokeStyle = '#fca5a5';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 6]);
+    ctx.lineDashOffset = -frameCount * 0.6;
+    ctx.beginPath();
+    ctx.arc(0, 0, r + 7, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  function drawBoss(b) {
+    ctx.save();
+    let jx = 0;
+    let jy = 0;
+    if (b.transform > 0) {
+      jx = (Math.random() - 0.5) * 5;
+      jy = (Math.random() - 0.5) * 5;
+    }
+    ctx.translate(b.x + jx, b.y + jy);
+    const pulse = 0.5 + 0.5 * Math.sin(frameCount * 0.15);
+
+    // During the first half of a transformation, the new form flickers through
+    let form = b.phase;
+    if (b.transform > 60 && Math.floor(b.transform / 4) % 3 === 0) form = b.pendingPhase;
+    if (form === 1) drawBossForm1();
+    else if (form === 2) drawBossForm2(pulse);
+    else drawBossForm3(pulse);
+
+    if (b.transform > 0) {
+      // Shield shell while invulnerable
+      ctx.fillStyle = `rgba(254, 240, 138, ${0.06 + pulse * 0.1})`;
+      ctx.strokeStyle = `rgba(226, 232, 240, ${0.35 + pulse * 0.45})`;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 98, 62, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      if (b.transform > 54 && b.transform < 66) {
+        ctx.fillStyle = `rgba(255, 255, 255, ${1 - Math.abs(b.transform - 60) / 6})`;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 90, 56, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    ctx.restore();
+  }
+
+  function drawBossBeam(b) {
+    if (!b || !b.beam) return;
+    const bm = b.beam;
+    const top = b.y + 20;
+    ctx.save();
+    if (bm.warn > 0) {
+      const blink = Math.floor(bm.warn / 5) % 2 ? 0.6 : 0.25;
+      ctx.fillStyle = `rgba(239, 68, 68, ${blink * 0.3})`;
+      ctx.fillRect(bm.x - 22, top, 44, H - top);
+      ctx.strokeStyle = `rgba(254, 202, 202, ${blink})`;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([10, 8]);
+      ctx.beginPath();
+      ctx.moveTo(bm.x - 22, top);
+      ctx.lineTo(bm.x - 22, H);
+      ctx.moveTo(bm.x + 22, top);
+      ctx.lineTo(bm.x + 22, H);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      const r = 5 + (70 - bm.warn) * 0.22;
+      const g = ctx.createRadialGradient(bm.x, top, 1, bm.x, top, r);
+      g.addColorStop(0, '#ffffff');
+      g.addColorStop(1, 'rgba(239, 68, 68, 0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(bm.x, top, r, 0, Math.PI * 2);
+      ctx.fill();
+    } else if (bm.fire > 0) {
+      ctx.globalCompositeOperation = 'lighter';
+      const hw = 20 + Math.sin(frameCount * 0.9) * 3;
+      const g = ctx.createLinearGradient(bm.x - hw * 2, 0, bm.x + hw * 2, 0);
+      g.addColorStop(0, 'rgba(239, 68, 68, 0)');
+      g.addColorStop(0.5, 'rgba(239, 68, 68, 0.55)');
+      g.addColorStop(1, 'rgba(239, 68, 68, 0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(bm.x - hw * 2, top, hw * 4, H - top);
+      ctx.fillStyle = 'rgba(248, 113, 113, 0.85)';
+      ctx.fillRect(bm.x - hw, top, hw * 2, H - top);
+      ctx.fillStyle = '#fff1f2';
+      ctx.fillRect(bm.x - hw * 0.35, top, hw * 0.7, H - top);
+    }
+    ctx.restore();
+  }
+
+  // ---------- Overdrive laser ----------
+  function drawPlayerLaser() {
+    if (!running || player.laser <= 0) return;
+    const hw = laserHalfWidth();
+    const bx = player.x;
+    const bottom = player.y - 22;
+    const color = player.spec.beamColor;
+    const flicker = 1 + Math.sin(frameCount * 1.3) * 0.08;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+
+    const g = ctx.createLinearGradient(bx - hw * 2.4, 0, bx + hw * 2.4, 0);
+    g.addColorStop(0, 'rgba(0, 0, 0, 0)');
+    g.addColorStop(0.5, color);
+    g.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.globalAlpha = 0.45;
+    ctx.fillStyle = g;
+    ctx.fillRect(bx - hw * 2.4, 0, hw * 4.8, bottom);
+
+    ctx.globalAlpha = 0.85;
+    ctx.fillStyle = color;
+    ctx.fillRect(bx - hw * flicker, 0, hw * 2 * flicker, bottom);
+
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(bx - hw * 0.35, 0, hw * 0.7, bottom);
+
+    // Energy rings racing up the beam
+    ctx.strokeStyle = '#ffffff';
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.6;
+    for (let k = 0; k < 6; k++) {
+      const ry = bottom - ((frameCount * 14 + k * 115) % Math.max(1, bottom));
+      ctx.beginPath();
+      ctx.ellipse(bx, ry, hw * 1.35, 4, 0, 0, Math.PI * 2);
+      ctx.stroke();
+    }
+
+    // Muzzle bloom
+    ctx.globalAlpha = 1;
+    const m = ctx.createRadialGradient(bx, bottom, 1, bx, bottom, hw * 1.9);
+    m.addColorStop(0, '#ffffff');
+    m.addColorStop(0.5, color);
+    m.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = m;
+    ctx.beginPath();
+    ctx.arc(bx, bottom, hw * 1.9, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function drawOverdriveAura() {
+    if (!running || player.laser > 0 || player.overdrive < 100) return;
+    const pulse = 0.5 + 0.5 * Math.sin(frameCount * 0.2);
+    ctx.save();
+    ctx.strokeStyle = player.spec.beamColor;
+    ctx.globalAlpha = 0.3 + pulse * 0.45;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, 30 + pulse * 4, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ---------- Battleship ----------
+  function drawShip(s) {
+    const hw = s.w / 2;
+    const hh = s.h / 2;
+    const sinkT = s.sinking > 0 ? 1 - s.sinking / 150 : 0;
+    ctx.save();
+    ctx.translate(s.x, s.y);
+
+    // Stern wake (top) and bow wave (bottom)
+    if (sinkT < 0.7) {
+      ctx.globalAlpha = 1 - sinkT;
+      ctx.fillStyle = 'rgba(224, 242, 254, 0.18)';
+      ctx.beginPath();
+      ctx.moveTo(-hw + 8, -hh + 6);
+      ctx.lineTo(-hw - 26, -hh - 110);
+      ctx.lineTo(hw + 26, -hh - 110);
+      ctx.lineTo(hw - 8, -hh + 6);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.45)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-hw + 4, -hh + 20);
+      ctx.lineTo(-hw - 22, -hh - 100);
+      ctx.moveTo(hw - 4, -hh + 20);
+      ctx.lineTo(hw + 22, -hh - 100);
+      ctx.moveTo(-hw - 6, hh - 60);
+      ctx.quadraticCurveTo(-hw * 0.4, hh + 4, 0, hh + 8);
+      ctx.quadraticCurveTo(hw * 0.4, hh + 4, hw + 6, hh - 60);
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
+
+    if (sinkT > 0) {
+      ctx.rotate(sinkT * 0.35 * s.sinkDir);
+      const sc = 1 - sinkT * 0.3;
+      ctx.scale(sc, sc);
+      ctx.globalAlpha = Math.max(0, 1 - sinkT * 0.9);
+    }
+
+    // Hull
+    ctx.beginPath();
+    ctx.moveTo(0, hh);
+    ctx.quadraticCurveTo(hw, hh - 40, hw, hh - 72);
+    ctx.lineTo(hw, -hh + 26);
+    ctx.quadraticCurveTo(hw, -hh, hw - 14, -hh);
+    ctx.lineTo(-hw + 14, -hh);
+    ctx.quadraticCurveTo(-hw, -hh, -hw, -hh + 26);
+    ctx.lineTo(-hw, hh - 72);
+    ctx.quadraticCurveTo(-hw, hh - 40, 0, hh);
+    ctx.closePath();
+    ctx.fillStyle = s.hitFlash > 0 ? '#9ca3af' : '#4b5563';
+    ctx.fill();
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#1f2937';
+    ctx.stroke();
+
+    // Teak deck
+    ctx.save();
+    const dw = hw - 6;
+    ctx.beginPath();
+    ctx.moveTo(0, hh - 12);
+    ctx.quadraticCurveTo(dw, hh - 46, dw, hh - 74);
+    ctx.lineTo(dw, -hh + 28);
+    ctx.quadraticCurveTo(dw, -hh + 8, dw - 12, -hh + 8);
+    ctx.lineTo(-dw + 12, -hh + 8);
+    ctx.quadraticCurveTo(-dw, -hh + 8, -dw, -hh + 28);
+    ctx.lineTo(-dw, hh - 74);
+    ctx.quadraticCurveTo(-dw, hh - 46, 0, hh - 12);
+    ctx.closePath();
+    ctx.fillStyle = '#a08a6c';
+    ctx.fill();
+    ctx.clip();
+    ctx.strokeStyle = 'rgba(41, 37, 36, 0.18)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let px = -dw; px <= dw; px += 5) {
+      ctx.moveTo(px, -hh);
+      ctx.lineTo(px, hh);
+    }
+    ctx.stroke();
+    ctx.restore();
+
+    // Superstructure, bridge, funnel
+    ctx.fillStyle = '#6b7280';
+    ctx.fillRect(-14, -8, 28, 34);
+    ctx.fillStyle = '#9ca3af';
+    ctx.fillRect(-10, 4, 20, 18);
+    ctx.fillStyle = '#d1d5db';
+    ctx.beginPath();
+    ctx.arc(0, 14, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#374151';
+    ctx.beginPath();
+    ctx.ellipse(0, -24, 8, 11, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#111827';
+    ctx.beginPath();
+    ctx.ellipse(0, -24, 5, 7, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Deck fires once the hull is badly hurt
+    if (s.hp < s.maxHp * 0.5 || s.sinking) {
+      [[-12, 52], [10, -54], [-8, -36]].forEach(([fx, fy], idx) => {
+        if (idx > 0 && !s.sinking && s.hp > s.maxHp * 0.25) return;
+        const f = 4 + Math.sin(frameCount * 0.4 + idx) * 1.5;
+        ctx.fillStyle = '#f97316';
+        ctx.beginPath();
+        ctx.arc(fx, fy, f, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#fde047';
+        ctx.beginPath();
+        ctx.arc(fx, fy, f * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    // AA turrets
+    s.turrets.forEach((t) => {
+      ctx.save();
+      ctx.translate(t.ox, t.oy);
+      if (t.hp <= 0) {
+        ctx.fillStyle = '#1c1917';
+        ctx.beginPath();
+        ctx.arc(0, 0, t.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = (frameCount + t.oy) % 20 < 10 ? '#f97316' : '#7c2d12';
+        ctx.beginPath();
+        ctx.arc(0, 0, t.r * 0.35, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+        return;
+      }
+      ctx.rotate(t.angle);
+      ctx.fillStyle = '#1f2937';
+      if (t.kind === 'flak') {
+        ctx.fillRect(4, -5, 16, 3);
+        ctx.fillRect(4, 2, 16, 3);
+      } else {
+        [-4.5, -1.5, 1.5, 4.5].forEach((off) => ctx.fillRect(4, off - 1, 11, 2));
+      }
+      if (t.flash > 0) {
+        ctx.fillStyle = '#fde047';
+        ctx.beginPath();
+        ctx.arc(t.kind === 'flak' ? 22 : 17, 0, 4, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.fillStyle = t.hitFlash > 0 ? '#fef3c7' : t.kind === 'flak' ? '#6b7280' : '#78716c';
+      ctx.beginPath();
+      ctx.arc(0, 0, t.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = '#1f2937';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = '#374151';
+      ctx.fillRect(-3, -3, 6, 6);
+      ctx.restore();
+    });
+
+    // Hull integrity bar
+    if (!s.sinking && s.hp < s.maxHp) {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.6)';
+      ctx.fillRect(-22, -hh - 12, 44, 5);
+      ctx.fillStyle = '#f87171';
+      ctx.fillRect(-22, -hh - 12, 44 * (s.hp / s.maxHp), 5);
+    }
     ctx.restore();
   }
 
@@ -1698,6 +3108,8 @@
       ctx.arc(isl.x, isl.y, isl.r * 0.78, 0, Math.PI * 2);
       ctx.fill();
     });
+
+    ships.forEach(drawShip);
 
     powerups.forEach((p) => {
       ctx.save();
@@ -1737,14 +3149,30 @@
     missiles.forEach(drawMissile);
 
     enemies.forEach(drawEnemy);
-    if (boss) drawBoss(boss);
+    if (boss) {
+      drawBossBeam(boss);
+      drawBoss(boss);
+    }
 
     if (running) {
+      drawPlayerLaser();
+      drawOverdriveAura();
       wingmen.forEach(drawWingmanDrone);
       drawPlayerPlane(player.x, player.y, player.bank);
     }
 
     enemyBullets.forEach((eb) => {
+      if (eb.kind === 'flak') {
+        ctx.fillStyle = '#44403c';
+        ctx.beginPath();
+        ctx.arc(eb.x, eb.y, eb.r, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = frameCount % 6 < 3 ? '#fb923c' : '#fde047';
+        ctx.beginPath();
+        ctx.arc(eb.x, eb.y, eb.r * 0.5, 0, Math.PI * 2);
+        ctx.fill();
+        return;
+      }
       ctx.fillStyle = eb.color;
       ctx.beginPath();
       ctx.arc(eb.x, eb.y, eb.r, 0, Math.PI * 2);
