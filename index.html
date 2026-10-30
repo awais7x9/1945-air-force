@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>1945 Air Force - Arcade Shmup</title>
+<title>1945 Air Force v2 - Hangar, Wingmen & Homing Missiles</title>
 <style>
   :root {
     --gold: #fbbf24;
     --red: #ef4444;
     --cyan: #38bdf8;
     --green: #22c55e;
+    --purple: #c084fc;
   }
   * {
     box-sizing: border-box;
@@ -34,7 +35,7 @@
     height: 720px;
     max-width: 100vw;
     max-height: 100vh;
-    box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 12px rgba(56, 189, 248, 0.25);
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.9), 0 0 14px rgba(56, 189, 248, 0.3);
     border: 2px solid #1e293b;
     border-radius: 6px;
     overflow: hidden;
@@ -62,13 +63,13 @@
   .hud-left, .hud-right {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 5px;
   }
   .hud-right {
     align-items: flex-end;
   }
   .score-label {
-    font-size: 12px;
+    font-size: 11px;
     color: #94a3b8;
     letter-spacing: 1px;
   }
@@ -78,7 +79,7 @@
     color: var(--gold);
   }
   .hp-bar-container {
-    width: 140px;
+    width: 148px;
     height: 12px;
     background: rgba(15, 23, 42, 0.85);
     border: 2px solid #cbd5e1;
@@ -92,26 +93,29 @@
     transition: width 0.15s ease-out;
   }
   .stats-row {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: bold;
     color: #e2e8f0;
     display: flex;
-    gap: 10px;
+    gap: 6px;
     align-items: center;
+    flex-wrap: wrap;
   }
   .badge {
-    background: rgba(15, 23, 42, 0.8);
+    background: rgba(15, 23, 42, 0.82);
     border: 1px solid #475569;
     padding: 2px 6px;
     border-radius: 4px;
-    font-size: 12px;
+    font-size: 11px;
   }
+  .badge-cyan { border-color: #38bdf8; color: #38bdf8; }
+  .badge-purple { border-color: #c084fc; color: #e9d5ff; }
   #boss-hud {
     position: absolute;
-    top: 68px;
+    top: 76px;
     left: 50%;
     transform: translateX(-50%);
-    width: 82%;
+    width: 84%;
     display: none;
     flex-direction: column;
     align-items: center;
@@ -142,13 +146,13 @@
   .overlay {
     position: absolute;
     inset: 0;
-    background: rgba(9, 13, 22, 0.82);
-    backdrop-filter: blur(3px);
+    background: rgba(9, 13, 22, 0.88);
+    backdrop-filter: blur(4px);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 24px;
+    padding: 18px;
     text-align: center;
     z-index: 10;
   }
@@ -156,31 +160,87 @@
     display: none !important;
   }
   .title-banner {
-    font-size: 40px;
+    font-size: 36px;
     font-weight: 900;
     letter-spacing: 3px;
     color: var(--gold);
     text-shadow: 0 4px 0 #92400e, 0 0 20px rgba(251, 191, 36, 0.5);
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
   .subtitle-banner {
-    font-size: 15px;
-    letter-spacing: 4px;
+    font-size: 13px;
+    letter-spacing: 3px;
     color: #38bdf8;
-    margin-bottom: 24px;
+    margin-bottom: 14px;
+    font-weight: bold;
+  }
+  .hangar-label {
+    font-size: 12px;
+    color: #cbd5e1;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    font-weight: bold;
+  }
+  .aircraft-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    width: 96%;
+    margin-bottom: 14px;
+  }
+  .aircraft-card {
+    background: rgba(15, 23, 42, 0.9);
+    border: 2px solid #334155;
+    border-radius: 8px;
+    padding: 8px 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .aircraft-card:hover {
+    border-color: #64748b;
+    transform: translateY(-2px);
+  }
+  .aircraft-card.selected {
+    border-color: var(--gold);
+    background: rgba(30, 41, 59, 0.95);
+    box-shadow: 0 0 14px rgba(251, 191, 36, 0.35);
+  }
+  .aircraft-name {
+    font-size: 12px;
+    font-weight: 900;
+    color: #f8fafc;
+  }
+  .aircraft-role {
+    font-size: 10px;
+    color: var(--cyan);
+    margin-bottom: 4px;
+  }
+  .stat-mini {
+    width: 90%;
+    font-size: 10px;
+    color: #94a3b8;
+    display: flex;
+    justify-content: space-between;
+  }
+  .stat-Mini-bar {
+    color: var(--gold);
     font-weight: bold;
   }
   .controls-box {
     background: rgba(30, 41, 59, 0.85);
     border: 1px solid #475569;
     border-radius: 8px;
-    padding: 16px 20px;
-    margin-bottom: 24px;
+    padding: 12px 14px;
+    margin-bottom: 16px;
     text-align: left;
-    font-size: 13px;
-    line-height: 1.7;
+    font-size: 12px;
+    line-height: 1.55;
     color: #cbd5e1;
-    width: 90%;
+    width: 96%;
   }
   .controls-box strong {
     color: var(--gold);
@@ -189,9 +249,9 @@
     background: linear-gradient(180deg, #f59e0b, #d97706);
     color: #090d16;
     font-family: inherit;
-    font-size: 18px;
+    font-size: 17px;
     font-weight: 900;
-    padding: 12px 32px;
+    padding: 11px 28px;
     border: 2px solid #fde68a;
     border-radius: 6px;
     cursor: pointer;
@@ -254,12 +314,14 @@
 
   <div class="hud">
     <div class="hud-left">
-      <div class="score-label">HULL INTEGRITY</div>
+      <div class="score-label" id="plane-hud-label">P-38 LIGHTNING</div>
       <div class="hp-bar-container">
         <div id="hp-fill" class="hp-bar-fill"></div>
       </div>
       <div class="stats-row">
         <span class="badge" id="weapon-badge">WPN LV.1</span>
+        <span class="badge badge-cyan" id="wingmen-badge">DRONES: 1</span>
+        <span class="badge badge-purple" id="missile-badge">MSL LV.1</span>
         <span class="badge" id="bomb-badge">BOMBS: 3</span>
       </div>
     </div>
@@ -289,18 +351,44 @@
     <button id="pauseBtn" class="action-btn">⏸ PAUSE</button>
   </div>
 
-  <!-- Start Screen -->
+  <!-- Start / Hangar Screen -->
   <div id="start-overlay" class="overlay">
-    <div class="title-banner">1945</div>
-    <div class="subtitle-banner">PACIFIC AIR FORCE</div>
+    <div class="title-banner">1945: V2</div>
+    <div class="subtitle-banner">STRIKE SQUADRON EDITION</div>
+
+    <div class="hangar-label">SELECT YOUR FIGHTER AIRCRAFT</div>
+    <div class="aircraft-grid">
+      <div class="aircraft-card selected" data-plane="p38">
+        <div class="aircraft-name">P-38 LIGHTNING</div>
+        <div class="aircraft-role">Balanced Striker</div>
+        <div class="stat-mini"><span>SPD</span><span class="stat-Mini-bar">★★★★☆</span></div>
+        <div class="stat-mini"><span>ARM</span><span class="stat-Mini-bar">★★★★☆</span></div>
+        <div class="stat-mini"><span>MSL</span><span class="stat-Mini-bar">Twin Lock</span></div>
+      </div>
+      <div class="aircraft-card" data-plane="p51">
+        <div class="aircraft-name">P-51 MUSTANG</div>
+        <div class="aircraft-role">Speed Interceptor</div>
+        <div class="stat-mini"><span>SPD</span><span class="stat-Mini-bar">★★★★★</span></div>
+        <div class="stat-mini"><span>ARM</span><span class="stat-Mini-bar">★★★☆☆</span></div>
+        <div class="stat-mini"><span>MSL</span><span class="stat-Mini-bar">Rapid Swarm</span></div>
+      </div>
+      <div class="aircraft-card" data-plane="p61">
+        <div class="aircraft-name">P-61 WIDOW</div>
+        <div class="aircraft-role">Heavy Gunship</div>
+        <div class="stat-mini"><span>SPD</span><span class="stat-Mini-bar">★★★☆☆</span></div>
+        <div class="stat-mini"><span>ARM</span><span class="stat-Mini-bar">★★★★★</span></div>
+        <div class="stat-mini"><span>MSL</span><span class="stat-Mini-bar">HE Salvo</span></div>
+      </div>
+    </div>
+
     <div class="controls-box">
-      <div><strong>MOVE:</strong> WASD / Arrow Keys / Mouse / Touch Drag</div>
-      <div><strong>FIRE:</strong> Auto-Fire Enabled (or Hold Click / Z)</div>
+      <div><strong>MOVE:</strong> WASD / Arrows / Mouse / Touch Drag</div>
+      <div><strong>WEAPONS:</strong> Auto-Fire Guns + Auto Lock-On Homing Missiles</div>
       <div><strong>AIR STRIKE BOMB:</strong> Spacebar / X / B / Red Button</div>
-      <hr style="border-color:#334155;margin:8px 0;">
-      <div><strong>[P]</strong> Upgrade Guns (Up to Lv.4 Twin-Plasma)</div>
-      <div><strong>[B]</strong> Extra Air Strike &nbsp; <strong>[+]</strong> Repair Hull</div>
-      <div><strong>[★]</strong> Medal Bonus (+500 pts)</div>
+      <hr style="border-color:#334155;margin:6px 0;">
+      <div><strong>[P]</strong> Main Gun Upgrade &nbsp; <strong>[M]</strong> Homing Missile Upgrade</div>
+      <div><strong>[W]</strong> AI Wingman Drone (Up to 2 + Overcharge)</div>
+      <div><strong>[B]</strong> +1 Air Strike &nbsp; <strong>[+]</strong> Hull Repair &nbsp; <strong>[★]</strong> Medal</div>
     </div>
     <button id="startBtn" class="btn">SCRAMBLE MISSION</button>
   </div>
@@ -314,7 +402,7 @@
       <div style="font-size:14px;">HIGH SCORE: <strong id="final-hi">0</strong></div>
       <div style="font-size:14px;margin-top:4px;">WAVES SURVIVED: <strong id="final-wave">1</strong></div>
     </div>
-    <button id="restartBtn" class="btn">SORTIE AGAIN</button>
+    <button id="restartBtn" class="btn">RETURN TO HANGAR</button>
   </div>
 </div>
 
@@ -326,8 +414,11 @@
   const H = canvas.height;
 
   // UI Elements
+  const planeHudLabel = document.getElementById('plane-hud-label');
   const hpFill = document.getElementById('hp-fill');
   const weaponBadge = document.getElementById('weapon-badge');
+  const wingmenBadge = document.getElementById('wingmen-badge');
+  const missileBadge = document.getElementById('missile-badge');
   const bombBadge = document.getElementById('bomb-badge');
   const scoreVal = document.getElementById('score-val');
   const waveBadge = document.getElementById('wave-badge');
@@ -340,6 +431,53 @@
   const finalScoreEl = document.getElementById('final-score');
   const finalHiEl = document.getElementById('final-hi');
   const finalWaveEl = document.getElementById('final-wave');
+
+  // Aircraft Specifications
+  const AIRCRAFT_SPECS = {
+    p38: {
+      id: 'p38',
+      name: 'P-38 LIGHTNING',
+      speed: 5.4,
+      maxHp: 110,
+      fireInterval: 7,
+      missileInterval: 48,
+      missileDmg: 26,
+      primaryColor: '#e2e8f0',
+      accentColor: '#38bdf8'
+    },
+    p51: {
+      id: 'p51',
+      name: 'P-51 MUSTANG',
+      speed: 6.6,
+      maxHp: 90,
+      fireInterval: 5,
+      missileInterval: 34,
+      missileDmg: 19,
+      primaryColor: '#f1f5f9',
+      accentColor: '#ef4444'
+    },
+    p61: {
+      id: 'p61',
+      name: 'P-61 BLACK WIDOW',
+      speed: 4.5,
+      maxHp: 150,
+      fireInterval: 8,
+      missileInterval: 56,
+      missileDmg: 38,
+      primaryColor: '#334155',
+      accentColor: '#f59e0b'
+    }
+  };
+
+  let selectedPlaneKey = 'p38';
+
+  document.querySelectorAll('.aircraft-card').forEach((card) => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.aircraft-card').forEach((c) => c.classList.remove('selected'));
+      card.classList.add('selected');
+      selectedPlaneKey = card.getAttribute('data-plane');
+    });
+  });
 
   // Web Audio Synthesizer for Retro Arcade SFX
   let audioCtx = null;
@@ -365,12 +503,20 @@
 
     if (type === 'shoot') {
       osc.type = 'square';
-      osc.frequency.setValueAtTime(520, now);
-      osc.frequency.exponentialRampToValueAtTime(140, now + 0.055);
-      gain.gain.setValueAtTime(0.04, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.055);
+      osc.frequency.setValueAtTime(540, now);
+      osc.frequency.exponentialRampToValueAtTime(145, now + 0.05);
+      gain.gain.setValueAtTime(0.035, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.05);
       osc.start(now);
-      osc.stop(now + 0.055);
+      osc.stop(now + 0.05);
+    } else if (type === 'missile') {
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(280, now);
+      osc.frequency.exponentialRampToValueAtTime(620, now + 0.11);
+      gain.gain.setValueAtTime(0.05, now);
+      gain.gain.linearRampToValueAtTime(0.001, now + 0.11);
+      osc.start(now);
+      osc.stop(now + 0.11);
     } else if (type === 'hit') {
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(180, now);
@@ -383,7 +529,7 @@
       osc.type = 'sawtooth';
       osc.frequency.setValueAtTime(110, now);
       osc.frequency.exponentialRampToValueAtTime(28, now + 0.28);
-      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.setValueAtTime(0.13, now);
       gain.gain.linearRampToValueAtTime(0.001, now + 0.28);
       osc.start(now);
       osc.stop(now + 0.28);
@@ -411,7 +557,7 @@
   let running = false;
   let paused = false;
   let score = 0;
-  let highScore = Number(localStorage.getItem('1945_hi_score') || 0);
+  let highScore = Number(localStorage.getItem('1945_hi_score_v2') || 0);
   hiBadge.textContent = `HI: ${highScore}`;
 
   let wave = 1;
@@ -421,7 +567,9 @@
 
   // Entities
   let player;
+  let wingmen = [];
   let bullets = [];
+  let missiles = [];
   let enemyBullets = [];
   let enemies = [];
   let particles = [];
@@ -502,7 +650,6 @@
   }
   document.getElementById('pauseBtn').addEventListener('click', togglePause);
 
-  // Scenery initialization
   function initScenery() {
     clouds = [];
     islands = [];
@@ -510,8 +657,7 @@
       islands.push({
         x: Math.random() * W,
         y: Math.random() * H,
-        r: 35 + Math.random() * 55,
-        seed: Math.random() * 100
+        r: 35 + Math.random() * 55
       });
     }
     for (let i = 0; i < 10; i++) {
@@ -525,8 +671,21 @@
     }
   }
 
+  function syncWingmenEntities() {
+    while (wingmen.length < player.wingmenCount) {
+      const idx = wingmen.length;
+      wingmen.push({
+        side: idx === 0 ? -1 : 1,
+        x: player.x + (idx === 0 ? -48 : 48),
+        y: player.y + 12,
+        orbitPhase: idx * Math.PI
+      });
+    }
+  }
+
   function resetGame() {
     initAudio();
+    const spec = AIRCRAFT_SPECS[selectedPlaneKey];
     score = 0;
     wave = 1;
     frameCount = 0;
@@ -536,20 +695,28 @@
     bossHud.style.display = 'none';
 
     player = {
+      spec,
       x: W / 2,
       y: H - 100,
       w: 44,
       h: 44,
-      speed: 5.2,
-      hp: 100,
-      maxHp: 100,
+      speed: spec.speed,
+      hp: spec.maxHp,
+      maxHp: spec.maxHp,
       weaponLevel: 1,
+      missileLevel: 1,
+      wingmenCount: 1, // Start with 1 AI Wingman Drone active!
+      wingmenPower: 1,
       bombs: 3,
       invuln: 0,
       bank: 0
     };
 
+    wingmen = [];
+    syncWingmenEntities();
+
     bullets = [];
+    missiles = [];
     enemyBullets = [];
     enemies = [];
     particles = [];
@@ -564,14 +731,17 @@
   }
 
   function updateHUD() {
+    planeHudLabel.textContent = player.spec.name;
     hpFill.style.width = `${Math.max(0, (player.hp / player.maxHp) * 100)}%`;
     weaponBadge.textContent = `WPN LV.${player.weaponLevel}`;
+    wingmenBadge.textContent = `DRONES: ${player.wingmenCount}${player.wingmenPower > 1 ? '+' : ''}`;
+    missileBadge.textContent = `MSL LV.${player.missileLevel}`;
     bombBadge.textContent = `BOMBS: ${player.bombs}`;
     scoreVal.textContent = String(score).padStart(6, '0');
     waveBadge.textContent = `WAVE ${wave}`;
     if (score > highScore) {
       highScore = score;
-      localStorage.setItem('1945_hi_score', highScore);
+      localStorage.setItem('1945_hi_score_v2', highScore);
     }
     hiBadge.textContent = `HI: ${highScore}`;
   }
@@ -610,11 +780,11 @@
     addFloatingText(W / 2, H / 2, '⚡ ALLIED B-17 BARRAGE! ⚡', '#38bdf8');
 
     enemies.forEach((e) => {
-      e.hp -= 120;
+      e.hp -= 140;
       spawnExplosion(e.x, e.y, 12, false);
     });
     if (boss) {
-      boss.hp -= 180;
+      boss.hp -= 220;
       spawnExplosion(boss.x, boss.y, 25, true);
     }
     updateHUD();
@@ -625,45 +795,132 @@
     const lvl = player.weaponLevel;
     const x = player.x;
     const y = player.y - 18;
+    const pId = player.spec.id;
 
-    if (lvl === 1) {
-      bullets.push({ x: x - 11, y, vx: 0, vy: -11, dmg: 12, color: '#fbbf24', r: 3 });
-      bullets.push({ x: x + 11, y, vx: 0, vy: -11, dmg: 12, color: '#fbbf24', r: 3 });
-    } else if (lvl === 2) {
-      bullets.push({ x: x - 12, y, vx: 0, vy: -12, dmg: 13, color: '#fbbf24', r: 3.2 });
-      bullets.push({ x: x + 12, y, vx: 0, vy: -12, dmg: 13, color: '#fbbf24', r: 3.2 });
-      bullets.push({ x: x - 16, y: y + 4, vx: -1.8, vy: -11, dmg: 10, color: '#38bdf8', r: 2.8 });
-      bullets.push({ x: x + 16, y: y + 4, vx: 1.8, vy: -11, dmg: 10, color: '#38bdf8', r: 2.8 });
-    } else if (lvl === 3) {
-      bullets.push({ x: x, y: y - 4, vx: 0, vy: -13, dmg: 16, color: '#f97316', r: 4 });
-      bullets.push({ x: x - 14, y, vx: -0.6, vy: -12, dmg: 12, color: '#fbbf24', r: 3.2 });
-      bullets.push({ x: x + 14, y, vx: 0.6, vy: -12, dmg: 12, color: '#fbbf24', r: 3.2 });
-      bullets.push({ x: x - 20, y: y + 6, vx: -2.4, vy: -11, dmg: 11, color: '#38bdf8', r: 3 });
-      bullets.push({ x: x + 20, y: y + 6, vx: 2.4, vy: -11, dmg: 11, color: '#38bdf8', r: 3 });
+    if (pId === 'p51') {
+      // P-51 Mustang: High-velocity concentrated streams
+      bullets.push({ x: x - 8, y, vx: 0, vy: -14, dmg: 10 + lvl * 2, color: '#38bdf8', r: 3 });
+      bullets.push({ x: x + 8, y, vx: 0, vy: -14, dmg: 10 + lvl * 2, color: '#38bdf8', r: 3 });
+      if (lvl >= 2) {
+        bullets.push({ x: x - 16, y: y + 4, vx: -0.8, vy: -13.5, dmg: 9, color: '#fbbf24', r: 2.8 });
+        bullets.push({ x: x + 16, y: y + 4, vx: 0.8, vy: -13.5, dmg: 9, color: '#fbbf24', r: 2.8 });
+      }
+      if (lvl >= 3) {
+        bullets.push({ x, y: y - 6, vx: 0, vy: -15, dmg: 14, color: '#f43f5e', r: 3.6 });
+      }
+      if (lvl >= 4) {
+        bullets.push({ x: x - 22, y: y + 6, vx: -1.8, vy: -13, dmg: 11, color: '#38bdf8', r: 3 });
+        bullets.push({ x: x + 22, y: y + 6, vx: 1.8, vy: -13, dmg: 11, color: '#38bdf8', r: 3 });
+      }
+    } else if (pId === 'p61') {
+      // P-61 Black Widow: Heavy armor-piercing plasma shells
+      bullets.push({ x: x - 11, y, vx: 0, vy: -11.5, dmg: 16 + lvl * 3, color: '#f59e0b', r: 4.2 });
+      bullets.push({ x: x + 11, y, vx: 0, vy: -11.5, dmg: 16 + lvl * 3, color: '#f59e0b', r: 4.2 });
+      if (lvl >= 2) {
+        bullets.push({ x, y: y - 4, vx: 0, vy: -12, dmg: 18, color: '#ef4444', r: 4.6 });
+      }
+      if (lvl >= 3) {
+        bullets.push({ x: x - 20, y: y + 5, vx: -2.0, vy: -11, dmg: 14, color: '#fbbf24', r: 3.6 });
+        bullets.push({ x: x + 20, y: y + 5, vx: 2.0, vy: -11, dmg: 14, color: '#fbbf24', r: 3.6 });
+      }
+      if (lvl >= 4) {
+        bullets.push({ x: x - 26, y: y + 8, vx: -3.2, vy: -10.5, dmg: 15, color: '#ef4444', r: 3.8 });
+        bullets.push({ x: x + 26, y: y + 8, vx: 3.2, vy: -10.5, dmg: 15, color: '#ef4444', r: 3.8 });
+      }
     } else {
-      // Level 4 Maximum Overdrive
-      bullets.push({ x: x - 7, y: y - 5, vx: 0, vy: -14, dmg: 16, color: '#38bdf8', r: 4.2 });
-      bullets.push({ x: x + 7, y: y - 5, vx: 0, vy: -14, dmg: 16, color: '#38bdf8', r: 4.2 });
-      bullets.push({ x: x - 18, y, vx: -1.3, vy: -13, dmg: 13, color: '#fbbf24', r: 3.5 });
-      bullets.push({ x: x + 18, y, vx: 1.3, vy: -13, dmg: 13, color: '#fbbf24', r: 3.5 });
-      bullets.push({ x: x - 24, y: y + 6, vx: -3.0, vy: -11.5, dmg: 12, color: '#f43f5e', r: 3.2 });
-      bullets.push({ x: x + 24, y: y + 6, vx: 3.0, vy: -11.5, dmg: 12, color: '#f43f5e', r: 3.2 });
+      // P-38 Lightning: Balanced twin-boom spread
+      bullets.push({ x: x - 11, y, vx: 0, vy: -12.5, dmg: 12 + lvl * 2, color: '#fbbf24', r: 3.2 });
+      bullets.push({ x: x + 11, y, vx: 0, vy: -12.5, dmg: 12 + lvl * 2, color: '#fbbf24', r: 3.2 });
+      if (lvl >= 2) {
+        bullets.push({ x: x - 17, y: y + 4, vx: -1.6, vy: -11.5, dmg: 11, color: '#38bdf8', r: 3 });
+        bullets.push({ x: x + 17, y: y + 4, vx: 1.6, vy: -11.5, dmg: 11, color: '#38bdf8', r: 3 });
+      }
+      if (lvl >= 3) {
+        bullets.push({ x, y: y - 5, vx: 0, vy: -13.5, dmg: 15, color: '#f97316', r: 4 });
+      }
+      if (lvl >= 4) {
+        bullets.push({ x: x - 23, y: y + 6, vx: -2.8, vy: -11.5, dmg: 12, color: '#f43f5e', r: 3.3 });
+        bullets.push({ x: x + 23, y: y + 6, vx: 2.8, vy: -11.5, dmg: 12, color: '#f43f5e', r: 3.3 });
+      }
+    }
+  }
+
+  function findNearestTarget(fromX, fromY) {
+    let best = null;
+    let bestDist = Infinity;
+    if (boss && boss.hp > 0) {
+      best = boss;
+      bestDist = Math.hypot(boss.x - fromX, boss.y - fromY);
+    }
+    for (let i = 0; i < enemies.length; i++) {
+      const e = enemies[i];
+      if (e.y < 0) continue;
+      const d = Math.hypot(e.x - fromX, e.y - fromY);
+      if (d < bestDist) {
+        bestDist = d;
+        best = e;
+      }
+    }
+    return best;
+  }
+
+  function fireWingmenWeapons() {
+    wingmen.forEach((w) => {
+      const target = findNearestTarget(w.x, w.y);
+      let vx = 0;
+      let vy = -11;
+      if (target && player.wingmenPower >= 2) {
+        // Overcharged Wingmen aim slightly toward nearest enemy
+        const ang = Math.atan2(target.y - w.y, target.x - w.x);
+        vx = Math.cos(ang) * 11;
+        vy = Math.sin(ang) * 11;
+      }
+      bullets.push({
+        x: w.x,
+        y: w.y - 10,
+        vx,
+        vy,
+        dmg: 9 + player.wingmenPower * 4,
+        color: '#38bdf8',
+        r: 2.8
+      });
+    });
+  }
+
+  function fireHomingMissiles() {
+    playSound('missile');
+    const count = player.missileLevel + 1; // Lv.1 = 2 missiles, Lv.2 = 3, Lv.3 = 4, Lv.4 = 5
+    const baseDmg = player.spec.missileDmg + player.missileLevel * 5;
+
+    for (let i = 0; i < count; i++) {
+      const spreadIndex = i - (count - 1) / 2;
+      const launchAngle = -Math.PI / 2 + spreadIndex * 0.28;
+      missiles.push({
+        x: player.x + spreadIndex * 10,
+        y: player.y - 6,
+        vx: Math.cos(launchAngle) * 5.5,
+        vy: Math.sin(launchAngle) * 5.5,
+        speed: 7.2 + player.missileLevel * 0.4,
+        turnRate: 0.095 + player.missileLevel * 0.015,
+        dmg: baseDmg,
+        color: player.spec.accentColor,
+        life: 160
+      });
     }
   }
 
   function spawnEnemyWave() {
     if (boss) return;
 
-    // Spawn Boss every 900 frames (~15 seconds per wave)
     if (frameCount > 0 && frameCount % 950 === 0) {
-      const maxHp = 650 + wave * 350;
+      const maxHp = 750 + wave * 420;
       boss = {
         x: W / 2,
         y: -80,
         targetY: 125,
         w: 150,
         h: 85,
-        vx: 1.8,
+        vx: 1.9,
         hp: maxHp,
         maxHp: maxHp,
         timer: 0
@@ -674,11 +931,9 @@
       return;
     }
 
-    // Scout Fighter Formation
-    if (frameCount % Math.max(28, 62 - wave * 4) === 0) {
+    if (frameCount % Math.max(26, 60 - wave * 4) === 0) {
       const typeRoll = Math.random();
-      if (typeRoll < 0.55) {
-        // Zero Scout
+      if (typeRoll < 0.52) {
         const startX = 40 + Math.random() * (W - 80);
         enemies.push({
           type: 'scout',
@@ -688,12 +943,11 @@
           h: 32,
           vx: (Math.random() - 0.5) * 1.8,
           vy: 2.3 + Math.random() * 1.2 + wave * 0.15,
-          hp: 22 + wave * 6,
+          hp: 25 + wave * 7,
           score: 100,
           shootTimer: 35 + Math.floor(Math.random() * 45)
         });
-      } else if (typeRoll < 0.82) {
-        // Crimson Ace Interceptor (weaves)
+      } else if (typeRoll < 0.80) {
         const startX = 60 + Math.random() * (W - 120);
         enemies.push({
           type: 'ace',
@@ -704,12 +958,11 @@
           baseX: startX,
           angle: Math.random() * Math.PI * 2,
           vy: 2.6 + wave * 0.15,
-          hp: 42 + wave * 10,
+          hp: 48 + wave * 12,
           score: 220,
           shootTimer: 30
         });
       } else {
-        // Twin-Engine Heavy Gunship
         const startX = 70 + Math.random() * (W - 140);
         enemies.push({
           type: 'gunship',
@@ -719,7 +972,7 @@
           h: 48,
           vx: 0,
           vy: 1.35 + wave * 0.08,
-          hp: 110 + wave * 25,
+          hp: 125 + wave * 30,
           score: 450,
           shootTimer: 50
         });
@@ -728,12 +981,14 @@
   }
 
   function maybeDropPowerup(x, y, force = false) {
-    if (!force && Math.random() > 0.22) return;
+    if (!force && Math.random() > 0.26) return;
     const roll = Math.random();
     let kind = 'medal';
-    if (roll < 0.38) kind = 'weapon';
-    else if (roll < 0.62) kind = 'heal';
-    else if (roll < 0.78) kind = 'bomb';
+    if (roll < 0.26) kind = 'weapon';
+    else if (roll < 0.48) kind = 'missile';
+    else if (roll < 0.68) kind = 'wingman';
+    else if (roll < 0.82) kind = 'heal';
+    else if (roll < 0.92) kind = 'bomb';
 
     powerups.push({
       x,
@@ -751,7 +1006,7 @@
     screenShake = 10;
     playSound('hit');
     spawnExplosion(player.x, player.y, 10, false);
-    if (player.weaponLevel > 1 && Math.random() < 0.35) {
+    if (player.weaponLevel > 1 && Math.random() < 0.3) {
       player.weaponLevel--;
       addFloatingText(player.x, player.y - 20, 'WEAPON DAMAGED!', '#ef4444');
     }
@@ -775,7 +1030,6 @@
     if (airstrikeFlash > 0) airstrikeFlash--;
     if (player.invuln > 0) player.invuln--;
 
-    // Scenery movement
     islands.forEach((isl) => {
       isl.y += 0.65;
       if (isl.y - isl.r > H) {
@@ -818,9 +1072,28 @@
     player.x = Math.max(26, Math.min(W - 26, player.x));
     player.y = Math.max(40, Math.min(H - 36, player.y));
 
-    // Auto-Fire every 7 frames
-    if (frameCount % 7 === 0) {
+    // Update AI Wingmen Drones Formation
+    wingmen.forEach((w) => {
+      w.orbitPhase += 0.06;
+      const targetX = player.x + w.side * 44 + Math.cos(w.orbitPhase) * 6;
+      const targetY = player.y + 10 + Math.sin(w.orbitPhase) * 6;
+      w.x += (targetX - w.x) * 0.22;
+      w.y += (targetY - w.y) * 0.22;
+    });
+
+    // Fire Main Guns
+    if (frameCount % player.spec.fireInterval === 0) {
       firePlayerWeapons();
+    }
+
+    // Fire AI Wingmen Drones
+    if (frameCount % 13 === 0 && wingmen.length > 0) {
+      fireWingmenWeapons();
+    }
+
+    // Fire Homing Missiles
+    if (frameCount % player.spec.missileInterval === 0 && (enemies.length > 0 || boss)) {
+      fireHomingMissiles();
     }
 
     // Update Player Bullets
@@ -833,7 +1106,72 @@
       }
     }
 
-    // Spawn Enemies & Boss
+    // Update Homing Missiles
+    for (let i = missiles.length - 1; i >= 0; i--) {
+      const m = missiles[i];
+      m.life--;
+      if (m.life <= 0 || m.y < -30 || m.x < -30 || m.x > W + 30) {
+        missiles.splice(i, 1);
+        continue;
+      }
+
+      const target = findNearestTarget(m.x, m.y);
+      if (target) {
+        const desiredAngle = Math.atan2(target.y - m.y, target.x - m.x);
+        let currentAngle = Math.atan2(m.vy, m.vx);
+        let diff = desiredAngle - currentAngle;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        currentAngle += Math.max(-m.turnRate, Math.min(m.turnRate, diff));
+        m.vx = Math.cos(currentAngle) * m.speed;
+        m.vy = Math.sin(currentAngle) * m.speed;
+      }
+
+      m.x += m.vx;
+      m.y += m.vy;
+
+      // Smoke trail particle
+      if (frameCount % 2 === 0) {
+        particles.push({
+          x: m.x,
+          y: m.y,
+          vx: -m.vx * 0.15 + (Math.random() - 0.5) * 0.6,
+          vy: -m.vy * 0.15 + (Math.random() - 0.5) * 0.6,
+          size: 2.6,
+          color: '#cbd5e1',
+          life: 14,
+          maxLife: 14
+        });
+      }
+
+      // Check Missile collision with Boss
+      if (boss && Math.abs(m.x - boss.x) < boss.w / 2 && Math.abs(m.y - boss.y) < boss.h / 2) {
+        boss.hp -= m.dmg;
+        spawnExplosion(m.x, m.y, 6, false);
+        missiles.splice(i, 1);
+        continue;
+      }
+
+      // Check Missile collision with Enemies
+      for (let k = enemies.length - 1; k >= 0; k--) {
+        const e = enemies[k];
+        if (Math.hypot(m.x - e.x, m.y - e.y) < e.w * 0.6) {
+          e.hp -= m.dmg;
+          spawnExplosion(m.x, m.y, 7, false);
+          missiles.splice(i, 1);
+          if (e.hp <= 0) {
+            score += e.score;
+            spawnExplosion(e.x, e.y, e.type === 'gunship' ? 26 : 14, e.type === 'gunship');
+            addFloatingText(e.x, e.y, `+${e.score}`);
+            maybeDropPowerup(e.x, e.y, e.type === 'gunship');
+            enemies.splice(k, 1);
+            updateHUD();
+          }
+          break;
+        }
+      }
+    }
+
     spawnEnemyWave();
 
     // Update Boss
@@ -846,9 +1184,7 @@
         if (boss.x < 95 || boss.x > W - 95) boss.vx *= -1;
       }
 
-      // Boss firing patterns
       if (boss.timer % 48 === 0) {
-        // Radial spread
         const count = 9 + Math.min(6, wave);
         for (let k = 0; k < count; k++) {
           const ang = (Math.PI * 0.15) + (k / (count - 1)) * (Math.PI * 0.7);
@@ -863,7 +1199,6 @@
         }
       }
       if (boss.timer % 70 === 0) {
-        // Aimed twin heavy cannon
         const ang = Math.atan2(player.y - boss.y, player.x - boss.x);
         [-42, 42].forEach((offsetX) => {
           enemyBullets.push({
@@ -877,7 +1212,6 @@
         });
       }
 
-      // Check player bullets hitting boss
       for (let j = bullets.length - 1; j >= 0; j--) {
         const b = bullets[j];
         if (Math.abs(b.x - boss.x) < boss.w / 2 && Math.abs(b.y - boss.y) < boss.h / 2) {
@@ -893,21 +1227,21 @@
             life: 10,
             maxLife: 10
           });
-          if (boss.hp <= 0) {
-            spawnExplosion(boss.x, boss.y, 65, true);
-            score += 2500 * wave;
-            addFloatingText(boss.x, boss.y, `BOSS DESTROYED! +${2500 * wave}`, '#22c55e');
-            maybeDropPowerup(boss.x - 25, boss.y, true);
-            maybeDropPowerup(boss.x + 25, boss.y, true);
-            boss = null;
-            bossHud.style.display = 'none';
-            wave++;
-            updateHUD();
-            break;
-          }
+          if (boss.hp <= 0) break;
         }
       }
-      if (boss) {
+
+      if (boss && boss.hp <= 0) {
+        spawnExplosion(boss.x, boss.y, 65, true);
+        score += 2500 * wave;
+        addFloatingText(boss.x, boss.y, `BOSS DESTROYED! +${2500 * wave}`, '#22c55e');
+        maybeDropPowerup(boss.x - 28, boss.y, true);
+        maybeDropPowerup(boss.x + 28, boss.y, true);
+        boss = null;
+        bossHud.style.display = 'none';
+        wave++;
+        updateHUD();
+      } else if (boss) {
         bossBarFill.style.width = `${Math.max(0, (boss.hp / boss.maxHp) * 100)}%`;
       }
     }
@@ -952,7 +1286,6 @@
         }
       }
 
-      // Bullet collisions with enemy
       let destroyed = false;
       for (let j = bullets.length - 1; j >= 0; j--) {
         const b = bullets[j];
@@ -973,7 +1306,6 @@
       }
       if (destroyed) continue;
 
-      // Player collision with enemy
       if (Math.hypot(player.x - e.x, player.y - e.y) < (player.w + e.w) * 0.38) {
         damagePlayer(25);
         spawnExplosion(e.x, e.y, 16, false);
@@ -1015,9 +1347,29 @@
             score += 400;
             addFloatingText(player.x, player.y - 20, 'MAX WPN +400', '#38bdf8');
           }
+        } else if (p.kind === 'missile') {
+          if (player.missileLevel < 4) {
+            player.missileLevel++;
+            addFloatingText(player.x, player.y - 20, `HOMING MSL LV.${player.missileLevel}!`, '#c084fc');
+          } else {
+            score += 400;
+            addFloatingText(player.x, player.y - 20, 'MAX MSL +400', '#c084fc');
+          }
+        } else if (p.kind === 'wingman') {
+          if (player.wingmenCount < 2) {
+            player.wingmenCount++;
+            syncWingmenEntities();
+            addFloatingText(player.x, player.y - 20, 'TWIN AI WINGMEN ONLINE!', '#38bdf8');
+          } else if (player.wingmenPower < 3) {
+            player.wingmenPower++;
+            addFloatingText(player.x, player.y - 20, 'WINGMEN OVERCHARGED!', '#38bdf8');
+          } else {
+            score += 450;
+            addFloatingText(player.x, player.y - 20, 'MAX DRONES +450', '#38bdf8');
+          }
         } else if (p.kind === 'heal') {
-          player.hp = Math.min(player.maxHp, player.hp + 30);
-          addFloatingText(player.x, player.y - 20, 'HULL REPAIRED +30%', '#22c55e');
+          player.hp = Math.min(player.maxHp, player.hp + 35);
+          addFloatingText(player.x, player.y - 20, 'HULL REPAIRED!', '#22c55e');
         } else if (p.kind === 'bomb') {
           player.bombs = Math.min(5, player.bombs + 1);
           addFloatingText(player.x, player.y - 20, '+1 AIR STRIKE!', '#f97316');
@@ -1032,7 +1384,6 @@
       if (p.y > H + 30) powerups.splice(i, 1);
     }
 
-    // Update Particles
     for (let i = particles.length - 1; i >= 0; i--) {
       const pt = particles[i];
       pt.x += pt.vx;
@@ -1041,7 +1392,6 @@
       if (pt.life <= 0) particles.splice(i, 1);
     }
 
-    // Update Floating Texts
     for (let i = floatingTexts.length - 1; i >= 0; i--) {
       const ft = floatingTexts[i];
       ft.y -= 0.9;
@@ -1050,62 +1400,186 @@
     }
   }
 
-  // Drawing Helpers
+  function drawWingmanDrone(w) {
+    ctx.save();
+    ctx.translate(w.x, w.y);
+
+    // Compact Autonomous Twin-Prop Wingman Drone
+    ctx.fillStyle = player.wingmenPower >= 2 ? '#38bdf8' : '#94a3b8';
+    ctx.beginPath();
+    ctx.moveTo(-12, 0);
+    ctx.lineTo(12, 0);
+    ctx.lineTo(9, 6);
+    ctx.lineTo(-9, 6);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = '#f8fafc';
+    ctx.fillRect(-3, -9, 6, 18);
+
+    ctx.fillStyle = '#fbbf24';
+    ctx.beginPath();
+    ctx.arc(0, -2, 2.5, 0, Math.PI * 2);
+    ctx.fill();
+
+    const propW = Math.sin(frameCount * 0.9) * 5;
+    ctx.strokeStyle = '#fde047';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(-propW, -11);
+    ctx.lineTo(propW, -11);
+    ctx.stroke();
+
+    ctx.restore();
+  }
+
   function drawPlayerPlane(x, y, bank) {
     if (player.invuln > 0 && Math.floor(frameCount / 3) % 2 === 0) return;
     ctx.save();
     ctx.translate(x, y);
     ctx.scale(1 - Math.abs(bank) * 0.18, 1);
 
-    // P-38 Lightning Twin-Boom Style Fighter
-    // Twin tail booms
-    ctx.fillStyle = '#94a3b8';
-    ctx.fillRect(-14, -14, 5, 34);
-    ctx.fillRect(9, -14, 5, 34);
+    const pId = player.spec.id;
 
-    // Horizontal stabilizer tail
-    ctx.fillStyle = '#cbd5e1';
-    ctx.fillRect(-18, 15, 36, 5);
+    if (pId === 'p51') {
+      // P-51D Mustang Single-Engine Red-Tail Interceptor
+      ctx.fillStyle = '#dc2626';
+      ctx.fillRect(-14, 13, 28, 5); // Red Tail stabilizer
 
-    // Main wings
-    ctx.fillStyle = '#e2e8f0';
+      ctx.fillStyle = '#e2e8f0';
+      ctx.beginPath();
+      ctx.moveTo(-25, -2);
+      ctx.lineTo(25, -2);
+      ctx.lineTo(20, 7);
+      ctx.lineTo(-20, 7);
+      ctx.closePath();
+      ctx.fill();
+
+      // Red nose & fuselage
+      ctx.fillStyle = '#f8fafc';
+      ctx.fillRect(-5, -15, 10, 32);
+      ctx.fillStyle = '#ef4444';
+      ctx.fillRect(-5, -18, 10, 6);
+
+      // Bubble canopy
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 3.5, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const propWidth = Math.sin(frameCount * 0.9) * 9;
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-propWidth, -20);
+      ctx.lineTo(propWidth, -20);
+      ctx.stroke();
+    } else if (pId === 'p61') {
+      // P-61 Black Widow Stealth Night Fighter
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(-16, -15, 6, 36);
+      ctx.fillRect(10, -15, 6, 36);
+      ctx.fillRect(-19, 16, 38, 5);
+
+      ctx.fillStyle = '#334155';
+      ctx.beginPath();
+      ctx.moveTo(-28, -3);
+      ctx.lineTo(28, -3);
+      ctx.lineTo(24, 8);
+      ctx.lineTo(-24, 8);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#0f172a';
+      ctx.beginPath();
+      ctx.ellipse(0, -4, 7, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#f59e0b';
+      ctx.beginPath();
+      ctx.ellipse(0, -2, 4, 8, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const propWidth = Math.sin(frameCount * 0.8) * 7.5;
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-13 - propWidth, -17);
+      ctx.lineTo(-13 + propWidth, -17);
+      ctx.moveTo(13 - propWidth, -17);
+      ctx.lineTo(13 + propWidth, -17);
+      ctx.stroke();
+    } else {
+      // P-38 Lightning Twin-Boom Fighter
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(-14, -14, 5, 34);
+      ctx.fillRect(9, -14, 5, 34);
+
+      ctx.fillStyle = '#cbd5e1';
+      ctx.fillRect(-18, 15, 36, 5);
+
+      ctx.fillStyle = '#e2e8f0';
+      ctx.beginPath();
+      ctx.moveTo(-26, -2);
+      ctx.lineTo(26, -2);
+      ctx.lineTo(22, 7);
+      ctx.lineTo(-22, 7);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#1d4ed8';
+      ctx.beginPath();
+      ctx.arc(-19, 2, 3.5, 0, Math.PI * 2);
+      ctx.arc(19, 2, 3.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#f8fafc';
+      ctx.beginPath();
+      ctx.ellipse(0, -3, 6, 16, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = '#38bdf8';
+      ctx.beginPath();
+      ctx.ellipse(0, -1, 3.5, 7, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      const propWidth = Math.sin(frameCount * 0.8) * 7;
+      ctx.strokeStyle = '#fde047';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-11.5 - propWidth, -16);
+      ctx.lineTo(-11.5 + propWidth, -16);
+      ctx.moveTo(11.5 - propWidth, -16);
+      ctx.lineTo(11.5 + propWidth, -16);
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  function drawMissile(m) {
+    ctx.save();
+    ctx.translate(m.x, m.y);
+    ctx.rotate(Math.atan2(m.vy, m.vx) + Math.PI / 2);
+
+    // Missile body
+    ctx.fillStyle = '#f8fafc';
+    ctx.fillRect(-2.2, -6, 4.4, 11);
+
+    // Warhead tip
+    ctx.fillStyle = m.color;
     ctx.beginPath();
-    ctx.moveTo(-26, -2);
-    ctx.lineTo(26, -2);
-    ctx.lineTo(22, 7);
-    ctx.lineTo(-22, 7);
+    ctx.moveTo(-2.5, -6);
+    ctx.lineTo(2.5, -6);
+    ctx.lineTo(0, -11);
     ctx.closePath();
     ctx.fill();
 
-    // US Air Force Wing Roundels
-    ctx.fillStyle = '#1d4ed8';
+    // Thruster flame
+    ctx.fillStyle = '#fbbf24';
     ctx.beginPath();
-    ctx.arc(-19, 2, 3.5, 0, Math.PI * 2);
-    ctx.arc(19, 2, 3.5, 0, Math.PI * 2);
+    ctx.arc(0, 6, 2.2, 0, Math.PI * 2);
     ctx.fill();
-
-    // Center fuselage pod
-    ctx.fillStyle = '#f8fafc';
-    ctx.beginPath();
-    ctx.ellipse(0, -3, 6, 16, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Cockpit canopy
-    ctx.fillStyle = '#38bdf8';
-    ctx.beginPath();
-    ctx.ellipse(0, -1, 3.5, 7, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Spinning Propellers
-    const propWidth = Math.sin(frameCount * 0.8) * 7;
-    ctx.strokeStyle = '#fde047';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(-11.5 - propWidth, -16);
-    ctx.lineTo(-11.5 + propWidth, -16);
-    ctx.moveTo(11.5 - propWidth, -16);
-    ctx.lineTo(11.5 + propWidth, -16);
-    ctx.stroke();
 
     ctx.restore();
   }
@@ -1115,7 +1589,6 @@
     ctx.translate(e.x, e.y);
 
     if (e.type === 'scout') {
-      // Zero Fighter
       ctx.fillStyle = '#15803d';
       ctx.beginPath();
       ctx.moveTo(-17, -4);
@@ -1128,14 +1601,12 @@
       ctx.fillStyle = '#166534';
       ctx.fillRect(-4, -14, 8, 28);
 
-      // Red Wing Insignia
       ctx.fillStyle = '#ef4444';
       ctx.beginPath();
       ctx.arc(-11, 0, 2.8, 0, Math.PI * 2);
       ctx.arc(11, 0, 2.8, 0, Math.PI * 2);
       ctx.fill();
     } else if (e.type === 'ace') {
-      // Crimson Interceptor
       ctx.fillStyle = '#dc2626';
       ctx.beginPath();
       ctx.moveTo(0, 16);
@@ -1149,7 +1620,6 @@
       ctx.fillStyle = '#fef08a';
       ctx.fillRect(-2, -2, 4, 8);
     } else {
-      // Heavy Twin-Engine Gunship
       ctx.fillStyle = '#475569';
       ctx.fillRect(-28, -8, 56, 14);
       ctx.fillStyle = '#334155';
@@ -1170,7 +1640,6 @@
     ctx.save();
     ctx.translate(b.x, b.y);
 
-    // Giant Flying Fortress / Valkyrie Wing
     ctx.fillStyle = '#334155';
     ctx.beginPath();
     ctx.moveTo(-75, -15);
@@ -1180,15 +1649,12 @@
     ctx.closePath();
     ctx.fill();
 
-    // Armored Fuselage
     ctx.fillStyle = '#1e293b';
     ctx.fillRect(-16, -42, 32, 82);
 
-    // 4 Heavy Engine Nacelles
     ctx.fillStyle = '#64748b';
     [-52, -28, 28, 52].forEach((ox) => {
       ctx.fillRect(ox - 5, -24, 10, 44);
-      // Glowing engine / turret ports
       ctx.fillStyle = '#ef4444';
       ctx.beginPath();
       ctx.arc(ox, 16, 4, 0, Math.PI * 2);
@@ -1196,7 +1662,6 @@
       ctx.fillStyle = '#64748b';
     });
 
-    // Command Bridge Canopy
     ctx.fillStyle = '#f59e0b';
     ctx.fillRect(-10, -5, 20, 12);
 
@@ -1209,7 +1674,6 @@
       ctx.translate((Math.random() - 0.5) * screenShake, (Math.random() - 0.5) * screenShake);
     }
 
-    // Ocean Background with Scrolling Wave Striping
     ctx.fillStyle = '#075985';
     ctx.fillRect(0, 0, W, H);
 
@@ -1223,7 +1687,6 @@
       ctx.stroke();
     }
 
-    // Islands
     islands.forEach((isl) => {
       ctx.fillStyle = '#fde68a';
       ctx.beginPath();
@@ -1236,11 +1699,12 @@
       ctx.fill();
     });
 
-    // Powerups
     powerups.forEach((p) => {
       ctx.save();
       ctx.translate(p.x, p.y);
       ctx.fillStyle = p.kind === 'weapon' ? '#0284c7' :
+                      p.kind === 'missile' ? '#9333ea' :
+                      p.kind === 'wingman' ? '#0891b2' :
                       p.kind === 'heal' ? '#16a34a' :
                       p.kind === 'bomb' ? '#dc2626' : '#d97706';
       ctx.beginPath();
@@ -1251,17 +1715,18 @@
       ctx.stroke();
 
       ctx.fillStyle = '#fff';
-      ctx.font = 'bold 13px Courier New';
+      ctx.font = 'bold 12px Courier New';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       const label = p.kind === 'weapon' ? 'P' :
+                    p.kind === 'missile' ? 'M' :
+                    p.kind === 'wingman' ? 'W' :
                     p.kind === 'heal' ? '+' :
                     p.kind === 'bomb' ? 'B' : '★';
       ctx.fillText(label, 0, 1);
       ctx.restore();
     });
 
-    // Player Bullets
     bullets.forEach((b) => {
       ctx.fillStyle = b.color;
       ctx.beginPath();
@@ -1269,16 +1734,16 @@
       ctx.fill();
     });
 
-    // Enemies & Boss
+    missiles.forEach(drawMissile);
+
     enemies.forEach(drawEnemy);
     if (boss) drawBoss(boss);
 
-    // Player
     if (running) {
+      wingmen.forEach(drawWingmanDrone);
       drawPlayerPlane(player.x, player.y, player.bank);
     }
 
-    // Enemy Bullets
     enemyBullets.forEach((eb) => {
       ctx.fillStyle = eb.color;
       ctx.beginPath();
@@ -1290,7 +1755,6 @@
       ctx.fill();
     });
 
-    // Particles
     particles.forEach((pt) => {
       ctx.globalAlpha = Math.max(0, pt.life / pt.maxLife);
       ctx.fillStyle = pt.color;
@@ -1300,7 +1764,6 @@
     });
     ctx.globalAlpha = 1;
 
-    // Parallax Clouds
     clouds.forEach((c) => {
       ctx.fillStyle = `rgba(255, 255, 255, ${c.alpha})`;
       ctx.beginPath();
@@ -1309,7 +1772,6 @@
       ctx.fill();
     });
 
-    // Floating Combat Text
     floatingTexts.forEach((ft) => {
       ctx.globalAlpha = Math.min(1, ft.life / 20);
       ctx.fillStyle = ft.color;
@@ -1319,7 +1781,6 @@
     });
     ctx.globalAlpha = 1;
 
-    // Air Strike Flash
     if (airstrikeFlash > 0) {
       ctx.fillStyle = `rgba(254, 240, 138, ${airstrikeFlash / 45})`;
       ctx.fillRect(0, 0, W, H);
@@ -1344,7 +1805,10 @@
   }
 
   document.getElementById('startBtn').addEventListener('click', resetGame);
-  document.getElementById('restartBtn').addEventListener('click', resetGame);
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    gameoverOverlay.classList.add('hidden');
+    startOverlay.classList.remove('hidden');
+  });
 
   initScenery();
   loop();

@@ -1,21 +1,23 @@
-# 🛩️ 1945: Pacific Air Force — Arcade Shmup
+# 🛩️ 1945: Pacific Air Force — Strike Squadron Edition (v2)
 
-🎮 **[▶ Play the Game Live Here!](https://awais7x9.github.io/1945-air-force/)**
+🎮 **[▶ Click Here to Play Live in Your Browser!](https://awais7x9.github.io/1945-air-force/)**
 
-A retro vertical-scrolling arcade shoot-'em-up (shmup) built entirely in a **single, zero-dependency HTML5 file** using the HTML5 2D Canvas API and a procedural Web Audio API sound synthesizer.
+A retro arcade vertical-scrolling shoot-'em-up (shmup) built entirely in a **single, zero-dependency HTML5 file** using the HTML5 2D Canvas API and procedural Web Audio API sound synthesis.
 
-Pilot a twin-boom **P-38 Lightning** fighter across the Pacific theater, dodge bullet-hell patterns, collect power-ups, call in Allied B-17 air strikes, and face off against the heavy **Iron Valkyrie** boss bomber across endless escalating waves.
+Choose your fighter in the Hangar, deploy autonomous AI Wingman drones, fire auto-targeting homing missiles, collect power-ups, call in B-17 air strikes, and defeat the heavy **Iron Valkyrie** boss bomber across escalating waves.
 
 ---
 
-## ✨ Key Features
+## ✨ What's New in Version 2.0 (Strike Squadron Edition)
 
-- **Zero Dependencies & Single-File Architecture:** 100% self-contained HTML5, CSS3, and Vanilla JavaScript—no external images, audio files, or frameworks required.
-- **Procedural Retro Audio (Web Audio API):** Real-time synthesized 8-bit/16-bit arcade sound effects for gunfire, hits, explosions, power-ups, and air strikes.
-- **4-Tier Weapon Upgrade System:** Upgrade your fighter from basic twin machine guns up to **Level 4 Twin-Plasma Overdrive**.
-- **Dynamic Wave & Boss Progression:** Battle through formations of Zero Scouts, weaving Crimson Ace Interceptors, and Twin-Engine Heavy Gunships before confronting the **Super Bomber "Iron Valkyrie"** at the end of every wave.
-- **Cross-Platform Controls:** Seamless support for Keyboard (`WASD` / Arrow Keys), Mouse drag, and Mobile Touch controls.
-- **Persistent High Scores:** Automatically saves your top score locally in the browser via `localStorage` (`1945_hi_score`).
+- 🛩️ **Interactive Fighter Hangar:** Choose between 3 authentic WWII aircraft with unique stats, fire rates, armor, and missile behaviors:
+  - **P-38 Lightning (Balanced Striker):** High balance of speed, armor, and twin lock-on missiles.
+  - **P-51 Mustang (Speed Interceptor):** Maximum agility, blazing fire rate, and rapid swarm missiles.
+  - **P-61 Black Widow (Heavy Gunship):** Maximum durability (150 HP), heavy nose cannons, and devastating high-explosive missile salvos.
+- 🤖 **AI Wingmen Escort Drones (`[W]`):** Call in up to 2 autonomous AI wingmen flying in delta formation. Overcharge them with further upgrades to fire auto-aiming plasma lasers!
+- 🚀 **Auto Lock-On Homing Missiles (`[M]`):** Advanced missile physics that track the closest enemy targets and Boss weakpoints across 4 upgrade levels.
+- 🔊 **Enhanced Procedural Arcade SFX:** Dedicated real-time synthesized sound effects for machine guns, missile launches, drone laser fire, explosions, and sirens.
+- 📱 **Cross-Platform Responsive Controls:** Full support for Keyboard (`WASD` / Arrow Keys), Mouse drag, and Mobile Touch controls.
 
 ---
 
@@ -26,96 +28,92 @@ Pilot a twin-boom **P-38 Lightning** fighter across the Pacific theater, dodge b
 | Action | Keyboard | Mouse / Touch |
 | :--- | :--- | :--- |
 | **Move Aircraft** | `W` `A` `S` `D` or `Arrow Keys` | Click & Drag / Touch & Drag |
-| **Primary Fire** | Auto-Fire Enabled | Auto-Fire Enabled |
-| **Trigger Air Strike Bomb** | `Spacebar`, `B`, or `X` | Click/Tap red **AIR STRIKE** button |
+| **Primary Weapons & Missiles** | Auto-Fire Enabled | Auto-Fire Enabled |
+| **Trigger B-17 Air Strike Bomb** | `Spacebar`, `B`, or `X` | Click/Tap red **AIR STRIKE** button |
 | **Pause / Resume Game** | `P` | Click/Tap **⏸ PAUSE** button |
-| **Mute / Unmute SFX** | — | Click/Tap **🔊 SFX** button |
+| **Mute / Unmute Audio** | — | Click/Tap **🔊 SFX** button |
 
 ---
 
-## 🔫 Weapon Levels & Combat Mechanics
+## 🛩️ Hangar Fighter Specifications
 
-Your aircraft fires automatically every 7 frames. Collecting **[P]** power-ups upgrades your weapon system up to **Level 4**:
-
-1. **Level 1 — Twin Machine Guns:** Dual forward-firing cannons (`12 DMG` per round).
-2. **Level 2 — Quad Spread:** Dual forward cannons (`13 DMG`) + angled cyan wing guns (`10 DMG`).
-3. **Level 3 — Heavy Nose Cannon:** Central high-caliber orange cannon (`16 DMG`) + dual forward guns (`12 DMG`) + wide-angle wing cannons (`11 DMG`).
-4. **Level 4 — Twin-Plasma Overdrive:** Dual central cyan plasma cannons (`16 DMG`) + mid-angle gold cannons (`13 DMG`) + wide crimson flank cannons (`12 DMG`).
-
-> **⚠️ Combat Tip:** Taking direct hull damage triggers brief invulnerability, but carries a **35% chance** of damaging your weapon system and downgrading it by 1 level!
-
-### ⚡ Allied B-17 Air Strike (Bombs)
-- You start each sortie with **3 Air Strike Bombs** (can hold up to **5**).
-- Activating an Air Strike immediately **clears all enemy projectiles on screen**, deals **120 damage** to all active enemy planes, and inflicts **180 damage** to the Boss.
+| Aircraft | Role | Max HP | Speed | Fire Rate | Missile Type |
+| :--- | :--- | :---: | :---: | :---: | :--- |
+| **P-38 Lightning** | Balanced Striker | 110 | ★★★★☆ | Rapid (7 f) | Twin Lock-On |
+| **P-51 Mustang** | Speed Interceptor | 90 | ★★★★★ | Blazing (5 f) | Rapid Swarm |
+| **P-61 Black Widow** | Heavy Gunship | 150 | ★★★☆☆ | Heavy (8 f) | High-Explosive Salvo |
 
 ---
 
-## 📦 Power-Ups
+## 📦 Power-Ups & Upgrades
 
-Destroyed enemies have a **22% chance** to drop a supply crate (Heavy Gunships and Bosses **always** drop power-ups):
+Destroyed enemies have a chance to drop supply crates (Heavy Gunships and Bosses **always** drop power-ups):
 
-| Icon | Color | Name | Effect |
+| Icon | Color | Type | Effect |
 | :---: | :--- | :--- | :--- |
-| **`[P]`** | 🔵 Blue | **Weapon Upgrade** | Upgrades primary weapons by +1 level (grants **+400 pts** if already at Lv. 4). |
-| **`[+]`** | 🟢 Green | **Repair Hull** | Restores **+30% Hull Integrity** (up to 100 Max HP). |
-| **`[B]`** | 🔴 Red | **Extra Air Strike** | Adds **+1 Air Strike Bomb** (maximum of 5). |
+| **`[P]`** | 🔵 Blue | **Gun Upgrade** | Upgrades primary cannons up to Level 4 (+400 pts if maxed). |
+| **`[M]`** | 🟣 Purple | **Homing Missiles** | Upgrades auto-targeting missile salvo up to Level 4 (+400 pts if maxed). |
+| **`[W]`** | 🔷 Cyan | **AI Wingmen** | Deploys up to 2 escort drones; further pickups grant **Wingmen Overcharge**! |
+| **`[+]`** | 🟢 Green | **Repair Hull** | Restores **+35 HP** to your aircraft hull. |
+| **`[B]`** | 🔴 Red | **Extra Air Strike** | Adds **+1 B-17 Air Strike Bomb** (up to 5 maximum). |
 | **`[★]`** | 🟡 Gold | **Medal Bonus** | Awards an instant **+500 points** to your score. |
 
+> **⚠️ Combat Warning:** Taking direct hull damage grants temporary invulnerability, but has a **30% chance** of damaging and downgrading your primary weapon system by 1 level!
+
 ---
 
-## 👾 Enemy Intelligence & Bosses
+## 👾 Enemy Intelligence & Boss Battles
 
-Enemy speed, durability, and spawn rates scale dynamically with each wave:
-
-- **Zero Scout (`100 PTS`):** Light green fighter that flies in fast scouting formations and fires single aimed rounds.
-- **Crimson Ace Interceptor (`220 PTS`):** Agile red delta-wing aircraft that weaves horizontally in a sine-wave pattern while firing rapid aimed shots.
-- **Heavy Twin-Engine Gunship (`450 PTS`):** Heavily armored gunship that fires a 3-way spread cannon. Always drops a power-up when destroyed.
+- **Zero Scout (`100 PTS`):** Agile reconnaissance craft flying in quick squad formations with single aimed shots.
+- **Crimson Ace Interceptor (`220 PTS`):** Fast delta-wing fighter weaving horizontally in a sine wave with rapid bursts.
+- **Twin-Engine Heavy Gunship (`450 PTS`):** Armored flying fortress with a 3-way spread cannon. Always drops a power-up.
 - **⚠️ Wave Boss — Super Bomber "Iron Valkyrie" (`2500 × Wave PTS`):**
-  - Arrives every ~15 seconds (`950 frames`) per wave as **Iron Valkyrie MK-1, MK-2, ...**
-  - Armed with a massive radial bullet-hell spread cannon and dual aimed heavy turrets.
-  - Defeating the Iron Valkyrie drops **2 guaranteed power-ups** and advances you to the next wave.
+  - Arrives at the end of every wave as **Iron Valkyrie MK-1, MK-2, ...**
+  - Features dual heavy auto-targeting turrets and radial bullet-hell spread cannons.
+  - Defeating the boss drops **2 guaranteed power-ups** and advances you to the next wave.
 
 ---
 
 ## 🚀 Quick Start & Deployment
 
 ### 🕹️ Play Online Instantly
-You can play the game immediately in your browser:
+Play directly in any modern desktop or mobile browser with zero installation:
 👉 **[https://awais7x9.github.io/1945-air-force/](https://awais7x9.github.io/1945-air-force/)**
 
 ### Run Locally
-No build tools or local server required. Simply open the file in any modern web browser:
+Clone the repository and open directly in your web browser:
 
 ```bash
 # Clone the repository
 git clone https://github.com/awais7x9/1945-air-force.git
 cd 1945-air-force
 
-# Open directly in your browser (Linux / macOS / Windows)
-xdg-open 1945_air_force.html   # Linux
-open 1945_air_force.html       # macOS
-start 1945_air_force.html      # Windows
+# Open in browser (Linux / macOS / Windows)
+xdg-open index.html   # Linux
+open index.html       # macOS
+start index.html      # Windows
 ```
 
-### Host Live on GitHub Pages
-The game is already configured and deployed at:
+### GitHub Pages Hosting
+The repository is deployed and hosted live on GitHub Pages:
 👉 **[https://awais7x9.github.io/1945-air-force/](https://awais7x9.github.io/1945-air-force/)**
 
-If you fork this repository to your own account:
-1. In your GitHub repository, navigate to **Settings → Pages**.
-2. Under **Build and deployment**, set **Source** to **Deploy from a branch** and select `main` (`/` root).
-3. Save—your fork will be live at `https://<your-username>.github.io/<repo-name>/`.
+If you fork this repository to your own GitHub account:
+1. Go to **Settings → Pages** in your fork.
+2. Under **Build and deployment**, select **Deploy from a branch** and choose `main` (`/` root).
+3. Save, and your live version will be accessible at `https://<your-username>.github.io/<repo-name>/`.
 
 ---
 
-## 🛠️ Technical Overview
+## 🛠️ Technical Details
 
-- **Canvas Resolution:** `480 × 720` (9:16 vertical arcade aspect ratio, responsive scaling up to `100vw / 100vh`).
-- **Rendering:** Pure 2D Canvas vector primitives (`ctx.beginPath`, `ctx.ellipse`, `ctx.arc`) with dynamic parallax ocean waves, islands, clouds, particle explosions, and screen-shake effects.
-- **Audio Engine:** `AudioContext` oscillator synthesis using `square`, `sawtooth`, and `triangle` waveforms with exponential frequency ramps.
+- **Single-File Zero Dependency:** Everything is contained inside [`index.html`](file:///home/awais/Downloads/Project/game/1945-air-force/index.html) (HTML5 Canvas + Vanilla JS + CSS).
+- **Procedural Audio:** Web Audio API sound synthesizer with custom frequency curves and oscillators (no external MP3/WAV files).
+- **Resolution:** `480 × 720` (9:16 vertical arcade aspect ratio with responsive scaling to fit any viewport).
+- **Persistence:** High scores and stats saved automatically via `localStorage` (`1945_hi_score`).
 
 ---
 
 ## 📄 License
 
-Released under the [MIT License](LICENSE). Feel free to fork, modify, and enjoy!
+Released under the [MIT License](LICENSE). Feel free to fork, modify, and build upon it!
