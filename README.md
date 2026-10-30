@@ -1,5 +1,7 @@
 # 🛩️ 1945: Pacific Air Force — Arcade Shmup
 
+🎮 **[▶ Play the Game Live Here!](https://awais7x9.github.io/1945-air-force/)**
+
 A retro vertical-scrolling arcade shoot-'em-up (shmup) built entirely in a **single, zero-dependency HTML5 file** using the HTML5 2D Canvas API and a procedural Web Audio API sound synthesizer.
 
 Pilot a twin-boom **P-38 Lightning** fighter across the Pacific theater, dodge bullet-hell patterns, collect power-ups, call in Allied B-17 air strikes, and face off against the heavy **Iron Valkyrie** boss bomber across endless escalating waves.
@@ -77,12 +79,16 @@ Enemy speed, durability, and spawn rates scale dynamically with each wave:
 
 ## 🚀 Quick Start & Deployment
 
+### 🕹️ Play Online Instantly
+You can play the game immediately in your browser:
+👉 **[https://awais7x9.github.io/1945-air-force/](https://awais7x9.github.io/1945-air-force/)**
+
 ### Run Locally
 No build tools or local server required. Simply open the file in any modern web browser:
 
 ```bash
 # Clone the repository
-git clone https://github.com/<your-username>/1945-air-force.git
+git clone https://github.com/awais7x9/1945-air-force.git
 cd 1945-air-force
 
 # Open directly in your browser (Linux / macOS / Windows)
@@ -92,11 +98,13 @@ start 1945_air_force.html      # Windows
 ```
 
 ### Host Live on GitHub Pages
-To make the game playable directly via a GitHub Pages URL:
-1. Rename `1945_air_force.html` to `index.html` (or keep both).
-2. In your GitHub repository, navigate to **Settings → Pages**.
-3. Under **Build and deployment**, set **Source** to **Deploy from a branch** and select `main` (`/` root).
-4. Save—your game will be live at `https://<your-username>.github.io/<repo-name>/`.
+The game is already configured and deployed at:
+👉 **[https://awais7x9.github.io/1945-air-force/](https://awais7x9.github.io/1945-air-force/)**
+
+If you fork this repository to your own account:
+1. In your GitHub repository, navigate to **Settings → Pages**.
+2. Under **Build and deployment**, set **Source** to **Deploy from a branch** and select `main` (`/` root).
+3. Save—your fork will be live at `https://<your-username>.github.io/<repo-name>/`.
 
 ---
 
